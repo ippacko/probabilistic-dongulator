@@ -3,77 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Probabilistic Dongulator</title>
+  <title>The Probabilistic Dongulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue:        #3b82f6;
-      --blue-dark:   #2563eb;
-      --blue-bg:     #eff6ff;
-      --surface:     #f8fafc;
-      --border:      #e2e8f0;
-      --text:        #0f172a;
-      --text-muted:  #64748b;
-      --text-light:  #94a3b8;
-      --radius:      12px;
-      --radius-sm:   8px;
+      --border:     #e2e8f0;
+      --surface:    #f8fafc;
+      --text:       #0f172a;
+      --muted:      #64748b;
+      --light:      #94a3b8;
+      --radius:     16px;
+      --radius-sm:  10px;
     }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: #fff;
       color: var(--text);
-      line-height: 1.6;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
 
-    /* ── Header ──────────────────────────────────────── */
     header {
-      padding: 28px 0 22px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 28px;
+      text-align: center;
+      padding: 60px 24px 32px;
     }
 
     header h1 {
-      font-size: 1.65rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--text);
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
     }
 
     header p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-top: 3px;
+      font-size: 0.93rem;
+      color: var(--muted);
+      margin-top: 8px;
     }
 
-    /* ── Layout ──────────────────────────────────────── */
-    main { flex: 1; padding: 32px 0 56px; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    /* ── Controls Panel ──────────────────────────────── */
-    .controls-panel {
-      position: sticky;
-      top: 24px;
+    main {
+      width: 100%;
+      max-width: 480px;
+      padding: 0 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .card {
@@ -83,667 +63,300 @@
       overflow: hidden;
     }
 
-    .card-section {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-    }
+    .card-body { padding: 24px; }
 
-    .card-section:last-child { border-bottom: none; }
-
-    .section-label {
+    .field-label {
       font-size: 0.68rem;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-light);
-      margin-bottom: 11px;
+      letter-spacing: 0.09em;
+      color: var(--light);
+      margin-bottom: 9px;
     }
 
-    /* ── Form Controls ───────────────────────────────── */
-    .form-group { margin-bottom: 11px; }
-    .form-group:last-child { margin-bottom: 0; }
-
-    label {
-      display: block;
-      font-size: 0.84rem;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-
-    .hint {
-      font-weight: 400;
-      color: var(--text-muted);
-      font-size: 0.77rem;
-    }
-
-    input[type="number"],
-    input[type="text"],
     select {
       width: 100%;
-      padding: 8px 11px;
-      border: 1px solid var(--border);
+      padding: 10px 36px 10px 13px;
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
       font-family: inherit;
-      font-size: 0.875rem;
+      font-size: 0.95rem;
+      font-weight: 500;
       color: var(--text);
       background: #fff;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 32px;
+      background-position: right 11px center;
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
-    input[type="number"]:focus,
     select:focus {
       outline: none;
-      border-color: var(--blue);
+      border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
     }
 
-    .dist-desc {
-      font-size: 0.79rem;
-      color: var(--text-muted);
-      margin-top: 8px;
-      line-height: 1.55;
+    .race-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 13px;
+      line-height: 1.65;
+      min-height: 2.8em;
     }
 
-    /* ── Buttons ─────────────────────────────────────── */
-    .btn-primary {
+    .roll-btn {
       display: block;
       width: 100%;
-      padding: 11px;
-      background: var(--blue);
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--text);
       color: #fff;
       border: none;
       border-radius: var(--radius-sm);
       font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.15s, transform 0.1s;
-    }
-
-    .btn-primary:hover  { background: var(--blue-dark); }
-    .btn-primary:active { transform: scale(0.985); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      background: #fff;
-      color: var(--text-muted);
-      transition: background 0.12s, color 0.12s;
-    }
-
-    .btn-secondary:hover { background: var(--surface); color: var(--text); }
-
-    /* ── Results Panel ───────────────────────────────── */
-    .results-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      min-width: 0;
-    }
-
-    /* Empty state */
-    .empty-state {
-      padding: 72px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      text-align: center;
-      color: var(--text-light);
-    }
-
-    .empty-icon { width: 48px; height: 48px; opacity: 0.3; }
-
-    .empty-state h3 {
       font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
-    .empty-state p { font-size: 0.84rem; line-height: 1.6; }
-
-    /* ── Stats Grid ──────────────────────────────────── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .stat-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-    }
-
-    .stat-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-light);
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-      line-height: 1.2;
-    }
-
-    /* ── Result Card Header ──────────────────────────── */
-    .result-card-header {
-      padding: 13px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .result-card-title {
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-light);
-    }
-
-    /* ── Histogram ───────────────────────────────────── */
-    .chart-wrapper { padding: 20px; }
-
-    .chart-container {
-      position: relative;
-      height: 260px;
-    }
-
-    .bins-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .bins-label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    input[type="range"] {
-      width: 100px;
-      accent-color: var(--blue);
+      font-weight: 700;
+      letter-spacing: -0.01em;
       cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
     }
 
-    .bins-value {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      min-width: 22px;
-      text-align: right;
+    .roll-btn:hover  { background: #1e293b; }
+    .roll-btn:active { transform: scale(0.985); }
+
+    /* ── Result ───────────────────────────── */
+    .result-inner {
+      text-align: center;
+      padding: 36px 24px 28px;
     }
 
-    /* ── Data Table ──────────────────────────────────── */
-    .table-meta {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      font-weight: 400;
-    }
-
-    .table-actions { display: flex; gap: 6px; }
-
-    .table-scroll {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: var(--surface);
-      padding: 9px 20px;
-      text-align: left;
+    .result-race {
       font-size: 0.68rem;
-      font-weight: 600;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--light);
+      margin-bottom: 20px;
+    }
+
+    .result-number {
+      font-size: 5.5rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .result-unit {
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .result-badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 16px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: var(--text-light);
-      border-bottom: 1px solid var(--border);
     }
 
-    tbody td {
-      padding: 7px 20px;
-      border-bottom: 1px solid #f1f5f9;
-      font-variant-numeric: tabular-nums;
+    .result-flavor {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-top: 16px;
+      line-height: 1.7;
+      font-style: italic;
     }
 
-    tbody td:first-child { color: var(--text-light); font-size: 0.78rem; }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: #fafafa; }
-
-    /* ── Weighted Picker ─────────────────────────────── */
-    .btn-purple {
-      background: #7c3aed;
-    }
-    .btn-purple:hover  { background: #6d28d9; }
-
-    .picker-param-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .pick-results-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 18px 20px;
-    }
-
-    .pick-bubble {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      height: 44px;
-      padding: 0 10px;
-      border-radius: 50px;
-      background: #f5f3ff;
-      border: 1.5px solid rgba(124,58,237,0.25);
-      font-size: 0.95rem;
+    .reroll-btn {
+      margin-top: 22px;
+      padding: 8px 22px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      font-family: inherit;
+      font-size: 0.84rem;
       font-weight: 600;
-      color: #6d28d9;
-      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
     }
 
-    .pick-bubble.solo {
-      min-width: 80px;
-      height: 80px;
-      font-size: 2rem;
-      border-radius: 50%;
+    .reroll-btn:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-color: #cbd5e1;
     }
 
-    .weight-chart-container {
-      position: relative;
-      height: 190px;
+    /* ── Animation ─────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .picker-section-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #a78bfa;
-      margin-bottom: 11px;
-    }
+    .card.animate { animation: fade-up 0.22s ease; }
 
-    /* ── Footer ──────────────────────────────────────── */
-    footer {
-      padding: 20px 0;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--text-light);
-    }
-
-    /* ── Utilities ───────────────────────────────────── */
+    /* ── Misc ──────────────────────────────── */
     .hidden { display: none !important; }
 
-    /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-      .controls-panel { position: static; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    footer {
+      margin-top: auto;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: var(--light);
+      text-align: center;
     }
 
     @media (max-width: 480px) {
-      .container { padding: 0 16px; }
-      header h1 { font-size: 1.35rem; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      header h1      { font-size: 1.8rem; }
+      .result-number { font-size: 4rem; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="container">
-    <h1>Probabilistic Dongulator</h1>
-    <p>Generate and explore random samples from a variety of statistical distributions</p>
-  </div>
+  <h1>The Probabilistic Dongulator</h1>
+  <p>A DnD companion for the questions your Dungeon Master won't answer.</p>
 </header>
 
 <main>
-  <div class="container">
-    <div class="layout">
 
-      <!-- ── Controls ── -->
-      <aside class="controls-panel">
-        <div class="card">
-
-          <div class="card-section">
-            <div class="section-label">Distribution</div>
-            <div class="form-group">
-              <select id="dist-select" onchange="onDistChange()">
-                <option value="uniform">Uniform</option>
-                <option value="normal" selected>Normal (Gaussian)</option>
-                <option value="lognormal">Log-Normal</option>
-                <option value="exponential">Exponential</option>
-                <option value="poisson">Poisson</option>
-                <option value="beta">Beta</option>
-                <option value="gamma">Gamma</option>
-                <option value="binomial">Binomial</option>
-                <option value="triangular">Triangular</option>
-                <option value="weibull">Weibull</option>
-                <option value="pareto">Pareto</option>
-                <option value="chisquared">Chi-Squared</option>
-              </select>
-              <p id="dist-desc" class="dist-desc"></p>
-            </div>
-          </div>
-
-          <div class="card-section">
-            <div class="section-label">Parameters</div>
-            <div id="params"></div>
-          </div>
-
-          <div class="card-section">
-            <div class="section-label">Sample Size</div>
-            <div class="form-group">
-              <input type="number" id="n-samples" value="1000" min="1" max="100000">
-            </div>
-          </div>
-
-          <div class="card-section">
-            <button class="btn-primary" onclick="generate()">Generate Samples</button>
-          </div>
-
-        </div>
-      </aside>
-
-      <!-- ── Results ── -->
-      <section class="results-panel">
-
-        <div id="empty-state" class="card empty-state">
-          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 3v18h18"/>
-            <path d="M7 16l4-4 4 4 4-8"/>
-          </svg>
-          <h3>No samples generated yet</h3>
-          <p>Select a distribution, configure its parameters,<br>and click <strong>Generate Samples</strong> to explore.</p>
-        </div>
-
-        <div id="stats-section" class="hidden">
-          <div class="stats-grid" id="stats-grid"></div>
-        </div>
-
-        <div id="chart-card" class="card hidden">
-          <div class="result-card-header">
-            <span class="result-card-title">Frequency Distribution</span>
-            <div class="bins-control">
-              <span class="bins-label">Bins</span>
-              <input type="range" id="bins-slider" min="5" max="100" value="30"
-                oninput="onBinsChange(this.value)">
-              <span class="bins-value" id="bins-val">30</span>
-            </div>
-          </div>
-          <div class="chart-wrapper">
-            <div class="chart-container">
-              <canvas id="hist-canvas"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <div id="table-card" class="card hidden">
-          <div class="result-card-header">
-            <div>
-              <span class="result-card-title">Data</span>
-              <span class="table-meta" id="table-meta"></span>
-            </div>
-            <div class="table-actions">
-              <button class="btn-secondary" id="copy-btn" onclick="copyAll()">Copy</button>
-              <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
-            </div>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr><th>#</th><th>Value</th></tr>
-              </thead>
-              <tbody id="table-body"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div id="picker-card" class="card hidden">
-          <div class="result-card-header">
-            <span class="result-card-title" id="picker-card-title">Picks</span>
-            <button class="btn-secondary" onclick="pickValues()">Re-roll</button>
-          </div>
-          <!-- probability weight chart -->
-          <div style="padding:16px 20px 0;border-bottom:1px solid var(--border);">
-            <div class="section-label" style="margin-bottom:8px;">Probability Weights</div>
-            <div class="chart-wrapper" style="padding:8px 0 16px;">
-              <div class="weight-chart-container">
-                <canvas id="weight-canvas"></canvas>
-              </div>
-            </div>
-          </div>
-          <!-- drawn values -->
-          <div>
-            <div style="padding:14px 20px 0;">
-              <div class="section-label" id="picks-label-header">Results</div>
-            </div>
-            <div class="pick-results-wrap" id="pick-results-wrap"></div>
-          </div>
-        </div>
-
-      </section>
+  <div class="card">
+    <div class="card-body">
+      <div class="field-label">Select Race</div>
+      <select id="race-select" onchange="onRaceChange()">
+        <optgroup label="Common Races">
+          <option value="human">Human</option>
+          <option value="highelf">Elf (High)</option>
+          <option value="woodelf">Elf (Wood)</option>
+          <option value="drow">Elf (Drow)</option>
+          <option value="hilldwarf">Dwarf (Hill)</option>
+          <option value="mountaindwarf">Dwarf (Mountain)</option>
+          <option value="halfling">Halfling</option>
+          <option value="gnome">Gnome</option>
+          <option value="halfelf">Half-Elf</option>
+          <option value="halforc">Half-Orc</option>
+          <option value="tiefling">Tiefling</option>
+          <option value="dragonborn">Dragonborn</option>
+        </optgroup>
+        <optgroup label="Uncommon Races">
+          <option value="aasimar">Aasimar</option>
+          <option value="bugbear">Bugbear</option>
+          <option value="firbolg">Firbolg</option>
+          <option value="githyanki">Githyanki</option>
+          <option value="goliath">Goliath</option>
+          <option value="kobold">Kobold</option>
+          <option value="lizardfolk">Lizardfolk</option>
+          <option value="orc">Orc</option>
+          <option value="tabaxi">Tabaxi</option>
+          <option value="tortle">Tortle</option>
+          <option value="warforged">Warforged</option>
+        </optgroup>
+      </select>
+      <p class="race-desc" id="race-desc"></p>
+      <button class="roll-btn" onclick="roll()">🎲 Roll the Dongulator</button>
     </div>
   </div>
+
+  <div class="card hidden" id="result-card">
+    <div class="result-inner">
+      <div class="result-race" id="result-race"></div>
+      <div>
+        <span class="result-number" id="result-number"></span><span class="result-unit" id="result-unit">in</span>
+      </div>
+      <div class="result-badge" id="result-badge"></div>
+      <p class="result-flavor" id="result-flavor"></p>
+      <button class="reroll-btn" onclick="roll()">Roll Again</button>
+    </div>
+  </div>
+
 </main>
 
 <footer>
-  <div class="container">
-    Probabilistic Dongulator &mdash; Interactive Statistical Distribution Explorer
-  </div>
+  The Probabilistic Dongulator &mdash; For educational and entertainment purposes only.
 </footer>
 
 <script>
 // ─────────────────────────────────────────────────────────────────
-// Distribution definitions
+// Race data
+// Sizes (inches) scaled proportionally from human baseline
+// (mean 5.16 in, std 0.65 in) using average racial heights.
 // ─────────────────────────────────────────────────────────────────
-const DISTS = {
-  uniform: {
-    label: 'Uniform',
-    desc: 'Every value between the minimum and maximum is equally likely. The simplest continuous distribution.',
-    params: [
-      { id: 'min', label: 'Minimum', hint: 'Lower bound', default: 0,  step: 'any' },
-      { id: 'max', label: 'Maximum', hint: 'Upper bound', default: 10, step: 'any' }
-    ],
-    sample(p) {
-      if (p.min >= p.max) throw new Error('Maximum must be greater than Minimum');
-      return p.min + Math.random() * (p.max - p.min);
-    }
-  },
-
-  normal: {
-    label: 'Normal (Gaussian)',
-    desc: 'The classic bell curve. Values cluster symmetrically around the mean, with spread controlled by the standard deviation.',
-    params: [
-      { id: 'mean', label: 'Mean (μ)',    hint: 'Center of the distribution',    default: 0, step: 'any' },
-      { id: 'std',  label: 'Std Dev (σ)', hint: 'Spread — must be > 0',          default: 1, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.std <= 0) throw new Error('Standard deviation must be > 0');
-      return normalRng(p.mean, p.std);
-    }
-  },
-
-  lognormal: {
-    label: 'Log-Normal',
-    desc: 'A variable whose natural logarithm is normally distributed. Always positive and right-skewed — common in finance and biology.',
-    params: [
-      { id: 'mu',    label: 'Log Mean (μ)',    hint: 'Mean of the underlying normal',         default: 0,   step: 'any' },
-      { id: 'sigma', label: 'Log Std Dev (σ)', hint: 'Std dev of the underlying normal, > 0', default: 0.5, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.sigma <= 0) throw new Error('σ must be > 0');
-      return Math.exp(normalRng(p.mu, p.sigma));
-    }
-  },
-
-  exponential: {
-    label: 'Exponential',
-    desc: 'Models the waiting time between events in a Poisson process. Memoryless and always positive.',
-    params: [
-      { id: 'rate', label: 'Rate (λ)', hint: 'Events per unit time — must be > 0', default: 1, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.rate <= 0) throw new Error('Rate must be > 0');
-      return -Math.log(1 - Math.random()) / p.rate;
-    }
-  },
-
-  poisson: {
-    label: 'Poisson',
-    desc: 'Counts the number of events in a fixed interval. Integer-valued and useful for modelling rare events.',
-    params: [
-      { id: 'lambda', label: 'Lambda (λ)', hint: 'Expected event count — must be > 0', default: 3, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.lambda <= 0) throw new Error('Lambda must be > 0');
-      return poissonRng(p.lambda);
-    }
-  },
-
-  beta: {
-    label: 'Beta',
-    desc: 'A flexible distribution bounded between 0 and 1. Perfect for modelling probabilities and proportions.',
-    params: [
-      { id: 'alpha', label: 'Alpha (α)', hint: 'Shape parameter — must be > 0', default: 2, step: 'any', min: 1e-9 },
-      { id: 'beta',  label: 'Beta (β)',  hint: 'Shape parameter — must be > 0', default: 5, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.alpha <= 0 || p.beta <= 0) throw new Error('Both shape parameters must be > 0');
-      return betaRng(p.alpha, p.beta);
-    }
-  },
-
-  gamma: {
-    label: 'Gamma',
-    desc: 'Generalises the exponential distribution. Controls how quickly events accumulate over time.',
-    params: [
-      { id: 'shape', label: 'Shape (k)', hint: 'Must be > 0', default: 2, step: 'any', min: 1e-9 },
-      { id: 'scale', label: 'Scale (θ)', hint: 'Must be > 0', default: 2, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.shape <= 0 || p.scale <= 0) throw new Error('Shape and scale must be > 0');
-      return gammaRng(p.shape, p.scale);
-    }
-  },
-
-  binomial: {
-    label: 'Binomial',
-    desc: 'Counts the number of successes in n independent trials, each with probability p. Integer-valued.',
-    params: [
-      { id: 'n', label: 'Trials (n)',       hint: 'Number of trials — integer ≥ 1', default: 20,  step: 1,     min: 1, max: 10000 },
-      { id: 'p', label: 'Probability (p)',  hint: 'Success probability — 0 to 1',   default: 0.4, step: 'any', min: 0, max: 1 }
-    ],
-    sample(p) {
-      const n = Math.round(p.n);
-      if (n < 1) throw new Error('n must be ≥ 1');
-      if (p.p < 0 || p.p > 1) throw new Error('p must be between 0 and 1');
-      return binomialRng(n, p.p);
-    }
-  },
-
-  triangular: {
-    label: 'Triangular',
-    desc: 'Defined by a minimum, a most-likely value (mode), and a maximum. Useful when only limited data is available.',
-    params: [
-      { id: 'a', label: 'Minimum (a)', hint: 'Lower bound',         default: 0,  step: 'any' },
-      { id: 'c', label: 'Mode (c)',    hint: 'Most likely value',    default: 5,  step: 'any' },
-      { id: 'b', label: 'Maximum (b)', hint: 'Upper bound',         default: 10, step: 'any' }
-    ],
-    sample(p) {
-      if (p.a >= p.b) throw new Error('Maximum must be greater than Minimum');
-      if (p.c < p.a || p.c > p.b) throw new Error('Mode must be between Min and Max');
-      return triangularRng(p.a, p.b, p.c);
-    }
-  },
-
-  weibull: {
-    label: 'Weibull',
-    desc: 'Widely used in reliability engineering and survival analysis. The shape parameter controls whether the failure rate increases or decreases over time.',
-    params: [
-      { id: 'scale', label: 'Scale (λ)', hint: 'Must be > 0', default: 1,   step: 'any', min: 1e-9 },
-      { id: 'shape', label: 'Shape (k)', hint: 'Must be > 0', default: 1.5, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.scale <= 0 || p.shape <= 0) throw new Error('Scale and shape must be > 0');
-      return p.scale * Math.pow(-Math.log(1 - Math.random()), 1 / p.shape);
-    }
-  },
-
-  pareto: {
-    label: 'Pareto',
-    desc: 'A heavy-tailed distribution — the basis of the 80/20 rule. Used to model wealth, city sizes, and many natural phenomena.',
-    params: [
-      { id: 'scale', label: 'Scale (xₘ)', hint: 'Minimum value — must be > 0', default: 1, step: 'any', min: 1e-9 },
-      { id: 'shape', label: 'Shape (α)',  hint: 'Tail index — must be > 0',    default: 2, step: 'any', min: 1e-9 }
-    ],
-    sample(p) {
-      if (p.scale <= 0 || p.shape <= 0) throw new Error('Scale and shape must be > 0');
-      return p.scale / Math.pow(Math.random(), 1 / p.shape);
-    }
-  },
-
-  chisquared: {
-    label: 'Chi-Squared',
-    desc: 'The sum of k squared standard-normal variables. Fundamental to statistical hypothesis testing and confidence intervals.',
-    params: [
-      { id: 'k', label: 'Degrees of Freedom (k)', hint: 'Positive integer', default: 3, step: 1, min: 1 }
-    ],
-    sample(p) {
-      if (p.k < 1) throw new Error('Degrees of freedom must be ≥ 1');
-      return gammaRng(Math.round(p.k) / 2, 2);
-    }
-  }
+const RACES = {
+  // ── Common ─────────────────────────────────────────────────────
+  human:         { name: 'Human',            mean: 5.16, std: 0.65,
+    desc: 'Reliably average. The unambiguous baseline of the multiverse.' },
+  highelf:       { name: 'High Elf',         mean: 5.05, std: 0.52,
+    desc: 'Graceful and precise in all things — including this.' },
+  woodelf:       { name: 'Wood Elf',         mean: 4.90, std: 0.55,
+    desc: 'In harmony with nature. Modest, agile, and entirely at peace with it.' },
+  drow:          { name: 'Drow',             mean: 4.80, std: 0.55,
+    desc: 'Dark, mysterious, and a touch below average. The cloak compensates.' },
+  hilldwarf:     { name: 'Dwarf (Hill)',      mean: 3.85, std: 0.48,
+    desc: 'Stout in every dimension. Dense, resilient, thoroughly dependable.' },
+  mountaindwarf: { name: 'Dwarf (Mountain)', mean: 4.00, std: 0.50,
+    desc: 'Carved from the mountain. Proportioned accordingly.' },
+  halfling:      { name: 'Halfling',         mean: 3.10, std: 0.38,
+    desc: 'Small of stature. Enormous of confidence. Enormous.' },
+  gnome:         { name: 'Gnome',            mean: 3.35, std: 0.40,
+    desc: 'Cleverness compensates for a great many shortcomings. So they claim.' },
+  halfelf:       { name: 'Half-Elf',         mean: 5.10, std: 0.65,
+    desc: 'Best of both worlds. Mostly.' },
+  halforc:       { name: 'Half-Orc',         mean: 5.80, std: 0.75,
+    desc: 'Orcish heritage makes its presence known in all the expected places.' },
+  tiefling:      { name: 'Tiefling',         mean: 5.20, std: 0.85,
+    desc: 'Infernal variance. Devilishly unpredictable. Could go anywhere.' },
+  dragonborn:    { name: 'Dragonborn',       mean: 5.95, std: 0.78,
+    desc: 'Draconic heritage lends a certain scale. Their pride is fully warranted.' },
+  // ── Uncommon ───────────────────────────────────────────────────
+  aasimar:       { name: 'Aasimar',          mean: 5.18, std: 0.62,
+    desc: 'Divinely proportioned. As if by celestial design.' },
+  bugbear:       { name: 'Bugbear',          mean: 6.50, std: 0.88,
+    desc: 'They lurk in the shadows for multiple reasons. Now you know one more.' },
+  firbolg:       { name: 'Firbolg',          mean: 6.70, std: 0.88,
+    desc: 'Gentle giants in every respect. Every single respect.' },
+  githyanki:     { name: 'Githyanki',        mean: 5.30, std: 0.68,
+    desc: 'Militaristic discipline extends to every measurable dimension.' },
+  goliath:       { name: 'Goliath',          mean: 7.10, std: 0.92,
+    desc: 'Proportional to everything else about them. Formidable in every regard.' },
+  kobold:        { name: 'Kobold',           mean: 2.50, std: 0.33,
+    desc: 'What they lack in size, they make up for in trap-building ingenuity.' },
+  lizardfolk:    { name: 'Lizardfolk',       mean: 6.05, std: 0.80,
+    desc: 'Hemipenes not modelled in this version. Consult a herpetologist.' },
+  orc:           { name: 'Orc',              mean: 6.40, std: 0.85,
+    desc: 'Impressive by any civilised standard. And most uncivilised ones.' },
+  tabaxi:        { name: 'Tabaxi',           mean: 5.10, std: 0.70,
+    desc: 'Retractable? The scholars remain divided. The Tabaxi are not forthcoming.' },
+  tortle:        { name: 'Tortle',           mean: 5.00, std: 0.65,
+    desc: 'Slow, steady, and — given the housing situation — surprisingly well-endowed.' },
+  warforged:     { name: 'Warforged',        mean: null, std: null,
+    desc: 'Built for war, not recreation. Consult your DM and a qualified blacksmith.' },
 };
 
+const DESCRIPTORS = [
+  { max:  2.0,      label: 'Microscopic',    bg: '#f1f5f9', fg: '#94a3b8' },
+  { max:  3.0,      label: 'Petite',         bg: '#eff6ff', fg: '#93c5fd' },
+  { max:  4.0,      label: 'Modest',         bg: '#eff6ff', fg: '#60a5fa' },
+  { max:  4.8,      label: 'Below Average',  bg: '#f0fdf4', fg: '#4ade80' },
+  { max:  5.8,      label: 'Average',        bg: '#f0fdf4', fg: '#16a34a' },
+  { max:  6.6,      label: 'Above Average',  bg: '#fffbeb', fg: '#d97706' },
+  { max:  7.6,      label: 'Impressive',     bg: '#fff7ed', fg: '#ea580c' },
+  { max:  9.0,      label: 'Formidable',     bg: '#fef2f2', fg: '#dc2626' },
+  { max: Infinity,  label: 'Legendary',      bg: '#faf5ff', fg: '#9333ea' },
+];
+
 
 // ─────────────────────────────────────────────────────────────────
-// Random number generators
+// Sampling — Box-Muller transform
 // ─────────────────────────────────────────────────────────────────
-
-// Box-Muller transform
 function normalRng(mean, std) {
   let u;
   do { u = Math.random(); } while (u === 0);
@@ -752,582 +365,52 @@ function normalRng(mean, std) {
   return mean + std * z;
 }
 
-// Marsaglia-Tsang method
-function gammaRng(shape, scale) {
-  if (shape < 1) {
-    return gammaRng(1 + shape, scale) * Math.pow(Math.random(), 1 / shape);
-  }
-  const d = shape - 1 / 3;
-  const c = 1 / Math.sqrt(9 * d);
-  for (;;) {
-    let x, v;
-    do { x = normalRng(0, 1); v = 1 + c * x; } while (v <= 0);
-    v = v * v * v;
-    const u = Math.random();
-    if (u < 1 - 0.0331 * x * x * x * x) return d * v * scale;
-    if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v * scale;
-  }
-}
-
-function betaRng(alpha, beta) {
-  const x = gammaRng(alpha, 1);
-  const y = gammaRng(beta, 1);
-  return x / (x + y);
-}
-
-// Knuth algorithm for small λ, normal approximation for large
-function poissonRng(lambda) {
-  if (lambda > 30) return Math.max(0, Math.round(normalRng(lambda, Math.sqrt(lambda))));
-  const L = Math.exp(-lambda);
-  let k = 0, p = 1;
-  do { k++; p *= Math.random(); } while (p > L);
-  return k - 1;
-}
-
-// Exact for n ≤ 1000, normal approximation for larger n
-function binomialRng(n, p) {
-  if (n > 1000) {
-    const mean = n * p;
-    const std  = Math.sqrt(n * p * (1 - p));
-    if (std < 1e-9) return Math.round(mean);
-    return Math.max(0, Math.min(n, Math.round(normalRng(mean, std))));
-  }
-  let count = 0;
-  for (let i = 0; i < n; i++) if (Math.random() < p) count++;
-  return count;
-}
-
-// Inverse CDF
-function triangularRng(a, b, c) {
-  const u  = Math.random();
-  const fc = (c - a) / (b - a);
-  if (u < fc) return a + Math.sqrt(u * (b - a) * (c - a));
-  return b - Math.sqrt((1 - u) * (b - a) * (b - c));
-}
-
 
 // ─────────────────────────────────────────────────────────────────
-// App state
+// UI
 // ─────────────────────────────────────────────────────────────────
-let data  = [];
-let chart = null;
-let bins  = 30;
-
-
-// ─────────────────────────────────────────────────────────────────
-// UI helpers
-// ─────────────────────────────────────────────────────────────────
-function onDistChange() {
-  const key  = document.getElementById('dist-select').value;
-  const dist = DISTS[key];
-  document.getElementById('dist-desc').textContent = dist.desc;
-
-  const container = document.getElementById('params');
-  container.innerHTML = '';
-
-  dist.params.forEach(p => {
-    const g = document.createElement('div');
-    g.className = 'form-group';
-    g.innerHTML = `
-      <label for="p-${p.id}">
-        ${p.label} <span class="hint">— ${p.hint}</span>
-      </label>
-      <input type="number" id="p-${p.id}" value="${p.default}" step="${p.step || 'any'}"
-        ${p.min !== undefined ? `min="${p.min}"` : ''}
-        ${p.max !== undefined ? `max="${p.max}"` : ''}>
-    `;
-    container.appendChild(g);
-  });
-
-  clearResults();
+function onRaceChange() {
+  const race = RACES[document.getElementById('race-select').value];
+  document.getElementById('race-desc').textContent = race.desc;
+  document.getElementById('result-card').classList.add('hidden');
 }
 
-function updateEmptyState() {
-  const hasSamples = data.length > 0;
-  const hasPicks   = !document.getElementById('picker-card').classList.contains('hidden');
-  document.getElementById('empty-state').classList.toggle('hidden', hasSamples || hasPicks);
-}
+function roll() {
+  const key  = document.getElementById('race-select').value;
+  const race = RACES[key];
+  const card = document.getElementById('result-card');
 
-function clearResults() {
-  data = [];
-  document.getElementById('stats-section').classList.add('hidden');
-  document.getElementById('chart-card').classList.add('hidden');
-  document.getElementById('table-card').classList.add('hidden');
-  if (chart) { chart.destroy(); chart = null; }
-  updateEmptyState();
-}
+  document.getElementById('result-race').textContent = race.name.toUpperCase();
+  document.getElementById('result-flavor').textContent = race.desc;
 
-function getParams() {
-  const key    = document.getElementById('dist-select').value;
-  const params = {};
-  DISTS[key].params.forEach(p => {
-    params[p.id] = parseFloat(document.getElementById(`p-${p.id}`).value);
-  });
-  return params;
-}
+  const badge = document.getElementById('result-badge');
+  const unit  = document.getElementById('result-unit');
 
-
-// ─────────────────────────────────────────────────────────────────
-// Generate
-// ─────────────────────────────────────────────────────────────────
-function generate() {
-  const key  = document.getElementById('dist-select').value;
-  const dist = DISTS[key];
-  const p    = getParams();
-  const n    = Math.max(1, Math.min(100000, parseInt(document.getElementById('n-samples').value) || 1000));
-
-  try {
-    const result = [];
-    for (let i = 0; i < n; i++) result.push(dist.sample(p));
-    data = result;
-    render();
-  } catch (e) {
-    alert('Parameter error: ' + e.message);
-  }
-}
-
-
-// ─────────────────────────────────────────────────────────────────
-// Render
-// ─────────────────────────────────────────────────────────────────
-function render() {
-  updateEmptyState();
-  document.getElementById('stats-section').classList.remove('hidden');
-  document.getElementById('chart-card').classList.remove('hidden');
-  document.getElementById('table-card').classList.remove('hidden');
-  renderStats();
-  renderHistogram();
-  renderTable();
-}
-
-// Format a number to at most 5 significant figures, using exponential for large/tiny values
-function fmt(n) {
-  if (!isFinite(n)) return '—';
-  const a = Math.abs(n);
-  if (a === 0) return '0';
-  if (a >= 1e6 || (a < 0.001)) return n.toExponential(3);
-  return parseFloat(n.toPrecision(5)).toString();
-}
-
-function computeStats(arr) {
-  const n = arr.length;
-  let sum = 0, min = Infinity, max = -Infinity;
-  for (const v of arr) {
-    sum += v;
-    if (v < min) min = v;
-    if (v > max) max = v;
-  }
-  const mean = sum / n;
-  let variance = 0;
-  for (const v of arr) variance += (v - mean) ** 2;
-  variance /= n;
-
-  const sorted = [...arr].sort((a, b) => a - b);
-  const median = n % 2 === 0
-    ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2
-    : sorted[Math.floor(n / 2)];
-  const q1 = sorted[Math.floor(n * 0.25)];
-  const q3 = sorted[Math.floor(n * 0.75)];
-
-  return { n, mean, median, std: Math.sqrt(variance), variance, min, max, q1, q3 };
-}
-
-function renderStats() {
-  const s = computeStats(data);
-  const items = [
-    { label: 'Count',    value: s.n.toLocaleString() },
-    { label: 'Mean',     value: fmt(s.mean) },
-    { label: 'Median',   value: fmt(s.median) },
-    { label: 'Std Dev',  value: fmt(s.std) },
-    { label: 'Variance', value: fmt(s.variance) },
-    { label: 'Min',      value: fmt(s.min) },
-    { label: 'Max',      value: fmt(s.max) },
-    { label: 'IQR',      value: fmt(s.q3 - s.q1) },
-  ];
-  document.getElementById('stats-grid').innerHTML = items.map(i => `
-    <div class="stat-card">
-      <div class="stat-label">${i.label}</div>
-      <div class="stat-value">${i.value}</div>
-    </div>
-  `).join('');
-}
-
-function buildHistogram(arr, numBins) {
-  let min = Infinity, max = -Infinity;
-  for (const v of arr) { if (v < min) min = v; if (v > max) max = v; }
-  if (min === max) max = min + 1;
-
-  const width  = (max - min) / numBins;
-  const counts = new Array(numBins).fill(0);
-  for (const v of arr) {
-    let idx = Math.floor((v - min) / width);
-    if (idx >= numBins) idx = numBins - 1;
-    if (idx < 0)        idx = 0;
-    counts[idx]++;
-  }
-  const labels = counts.map((_, i) => fmt(min + i * width));
-  return { labels, counts, min, width };
-}
-
-function renderHistogram() {
-  const { labels, counts, min, width } = buildHistogram(data, bins);
-
-  if (chart) chart.destroy();
-  const ctx = document.getElementById('hist-canvas').getContext('2d');
-
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: counts,
-        backgroundColor: 'rgba(59,130,246,0.60)',
-        borderColor:     'rgba(59,130,246,0.85)',
-        borderWidth: 1,
-        borderRadius: 2,
-        barPercentage: 1.0,
-        categoryPercentage: 1.0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 220 },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: (items) => {
-              const i = items[0].dataIndex;
-              return `${fmt(min + i * width)} – ${fmt(min + (i + 1) * width)}`;
-            },
-            label: (item) =>
-              `Count: ${item.raw.toLocaleString()}  (${(item.raw / data.length * 100).toFixed(1)}%)`
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          border: { color: '#e2e8f0' },
-          ticks: {
-            maxTicksLimit: 9,
-            font: { size: 11, family: "'Inter', system-ui" },
-            color: '#94a3b8'
-          }
-        },
-        y: {
-          grid: { color: '#f1f5f9' },
-          border: { display: false },
-          ticks: {
-            font: { size: 11, family: "'Inter', system-ui" },
-            color: '#94a3b8'
-          },
-          title: {
-            display: true,
-            text: 'Frequency',
-            font: { size: 11, family: "'Inter', system-ui" },
-            color: '#94a3b8'
-          }
-        }
-      }
-    }
-  });
-}
-
-function renderTable() {
-  const max = Math.min(data.length, 500);
-  document.getElementById('table-meta').textContent =
-    data.length > 500
-      ? ` — showing first 500 of ${data.length.toLocaleString()}`
-      : ` — ${data.length.toLocaleString()} values`;
-
-  document.getElementById('table-body').innerHTML =
-    data.slice(0, max).map((v, i) => `
-      <tr><td>${i + 1}</td><td>${fmt(v)}</td></tr>
-    `).join('');
-}
-
-function onBinsChange(val) {
-  bins = parseInt(val);
-  document.getElementById('bins-val').textContent = val;
-  if (data.length > 0) renderHistogram();
-}
-
-
-// ─────────────────────────────────────────────────────────────────
-// Export / Copy
-// ─────────────────────────────────────────────────────────────────
-function copyAll() {
-  navigator.clipboard.writeText(data.join('\n')).then(() => {
-    const btn  = document.getElementById('copy-btn');
-    const orig = btn.textContent;
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = orig, 1600);
-  });
-}
-
-function exportCSV() {
-  const key  = document.getElementById('dist-select').value;
-  const csv  = 'index,value\n' + data.map((v, i) => `${i + 1},${v}`).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `dongulator-${key}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-
-// ─────────────────────────────────────────────────────────────────
-// Log-Gamma (Lanczos g=7) — needed for PDF calculations
-// ─────────────────────────────────────────────────────────────────
-function logGamma(x) {
-  const p = [
-    0.99999999999980993, 676.5203681218851,    -1259.1392167224028,
-    771.32342877765313,  -176.61502916214059,   12.507343278686905,
-    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
-  ];
-  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
-  x -= 1;
-  let a = p[0];
-  const t = x + 7.5;
-  for (let i = 1; i < p.length; i++) a += p[i] / (x + i);
-  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
-}
-
-function logBeta(a, b)       { return logGamma(a) + logGamma(b) - logGamma(a + b); }
-function logBinomCoeff(n, k) { return logGamma(n + 1) - logGamma(k + 1) - logGamma(n - k + 1); }
-
-
-// ─────────────────────────────────────────────────────────────────
-// PDF / PMF evaluation
-// ─────────────────────────────────────────────────────────────────
-function distPDF(key, p, v) {
-  switch (key) {
-    case 'uniform':
-      return (v >= p.min && v <= p.max) ? 1 / (p.max - p.min) : 0;
-    case 'normal': {
-      const z = (v - p.mean) / p.std;
-      return Math.exp(-0.5 * z * z) / (p.std * Math.sqrt(2 * Math.PI));
-    }
-    case 'lognormal': {
-      if (v <= 0) return 0;
-      const z = (Math.log(v) - p.mu) / p.sigma;
-      return Math.exp(-0.5 * z * z) / (v * p.sigma * Math.sqrt(2 * Math.PI));
-    }
-    case 'exponential':
-      return v >= 0 ? p.rate * Math.exp(-p.rate * v) : 0;
-    case 'poisson': {
-      const k = Math.round(v);
-      if (k < 0) return 0;
-      return Math.exp(k * Math.log(p.lambda) - p.lambda - logGamma(k + 1));
-    }
-    case 'beta': {
-      if (v <= 0 || v >= 1) return 0;
-      return Math.exp((p.alpha - 1) * Math.log(v) + (p.beta - 1) * Math.log(1 - v) - logBeta(p.alpha, p.beta));
-    }
-    case 'gamma': {
-      if (v <= 0) return 0;
-      return Math.exp((p.shape - 1) * Math.log(v) - v / p.scale - p.shape * Math.log(p.scale) - logGamma(p.shape));
-    }
-    case 'binomial': {
-      const n = Math.round(p.n), k = Math.round(v);
-      if (k < 0 || k > n) return 0;
-      if (p.p <= 0) return k === 0 ? 1 : 0;
-      if (p.p >= 1) return k === n ? 1 : 0;
-      return Math.exp(logBinomCoeff(n, k) + k * Math.log(p.p) + (n - k) * Math.log(1 - p.p));
-    }
-    case 'triangular': {
-      const {a, b, c} = p;
-      if (v < a || v > b) return 0;
-      if (v < c) return 2 * (v - a) / ((b - a) * (c - a));
-      if (v === c) return 2 / (b - a);
-      return 2 * (b - v) / ((b - a) * (b - c));
-    }
-    case 'weibull': {
-      if (v <= 0) return 0;
-      return (p.shape / p.scale) * Math.pow(v / p.scale, p.shape - 1) * Math.exp(-Math.pow(v / p.scale, p.shape));
-    }
-    case 'pareto': {
-      if (v < p.scale) return 0;
-      return p.shape * Math.pow(p.scale, p.shape) / Math.pow(v, p.shape + 1);
-    }
-    case 'chisquared': {
-      if (v <= 0) return 0;
-      const hk = Math.round(p.k) / 2;
-      return Math.exp((hk - 1) * Math.log(v) - v / 2 - hk * Math.log(2) - logGamma(hk));
-    }
-    default: return 0;
-  }
-}
-
-
-// ─────────────────────────────────────────────────────────────────
-// Weighted picker
-// ─────────────────────────────────────────────────────────────────
-let pickerChart = null;
-
-function buildWeights(key, params, min, max, step) {
-  const count = Math.round((max - min) / step) + 1;
-  if (count > 2000) throw new Error(`Too many discrete values (${count}). Increase the step size or narrow the range.`);
-  const values = [];
-  for (let i = 0; i < count; i++) values.push(parseFloat((min + i * step).toPrecision(12)));
-
-  const raw = values.map(v => {
-    const w = distPDF(key, params, v) * step;
-    return (isFinite(w) && w > 0) ? w : 0;
-  });
-  const total = raw.reduce((a, b) => a + b, 0);
-  if (total <= 0) throw new Error('The distribution assigns zero probability over this range. Adjust the range or parameters to overlap the distribution.');
-  const weights = raw.map(w => w / total);
-  return { values, weights };
-}
-
-function weightedPickOne(values, weights) {
-  const cumulative = [];
-  let sum = 0;
-  for (const w of weights) { sum += w; cumulative.push(sum); }
-  const r = Math.random();
-  let lo = 0, hi = cumulative.length - 1;
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1;
-    if (cumulative[mid] < r) lo = mid + 1; else hi = mid;
-  }
-  return values[lo];
-}
-
-function pickValues() {
-  const key    = document.getElementById('dist-select').value;
-  const params = getParams();
-  const min    = parseFloat(document.getElementById('pick-min').value);
-  const max    = parseFloat(document.getElementById('pick-max').value);
-  const step   = parseFloat(document.getElementById('pick-step').value);
-  const nPicks = Math.max(1, Math.min(1000, parseInt(document.getElementById('pick-n').value) || 1));
-  const label  = document.getElementById('pick-label').value.trim() || null;
-
-  if (isNaN(min) || isNaN(max) || isNaN(step) || step <= 0) { alert('Invalid range or step.'); return; }
-  if (min >= max) { alert('Range Max must be greater than Range Min.'); return; }
-
-  let values, weights;
-  try {
-    ({ values, weights } = buildWeights(key, params, min, max, step));
-  } catch (e) {
-    alert(e.message); return;
-  }
-
-  const picks = [];
-  for (let i = 0; i < nPicks; i++) picks.push(weightedPickOne(values, weights));
-
-  renderPickerResults(values, weights, picks, label);
-  updateEmptyState();
-}
-
-function renderPickerResults(values, weights, picks, label) {
-  const card = document.getElementById('picker-card');
-  card.classList.remove('hidden');
-
-  document.getElementById('picker-card-title').textContent = label ? `${label} — Picks` : 'Picks';
-
-  // ── Probability weight chart ──
-  if (pickerChart) { pickerChart.destroy(); pickerChart = null; }
-  const ctx = document.getElementById('weight-canvas').getContext('2d');
-  pickerChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: values.map(v => fmt(v)),
-      datasets: [{
-        data: weights.map(w => parseFloat((w * 100).toFixed(5))),
-        backgroundColor: 'rgba(124,58,237,0.45)',
-        borderColor:     'rgba(124,58,237,0.75)',
-        borderWidth: 1,
-        borderRadius: 2,
-        barPercentage: 1.0,
-        categoryPercentage: 1.0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 180 },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: (items) => `Value: ${values[items[0].dataIndex]}`,
-            label: (item)  => `Probability: ${item.raw.toFixed(3)}%`
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          border: { color: '#e2e8f0' },
-          ticks: {
-            maxTicksLimit: 12,
-            font: { size: 10, family: "'Inter', system-ui" },
-            color: '#94a3b8'
-          }
-        },
-        y: {
-          grid: { color: '#f1f5f9' },
-          border: { display: false },
-          ticks: {
-            font: { size: 10, family: "'Inter', system-ui" },
-            color: '#94a3b8',
-            callback: v => v + '%'
-          },
-          title: {
-            display: true,
-            text: 'Probability',
-            font: { size: 10, family: "'Inter', system-ui" },
-            color: '#94a3b8'
-          }
-        }
-      }
-    }
-  });
-
-  // ── Drawn values ──
-  const labelHeader = document.getElementById('picks-label-header');
-  labelHeader.textContent = picks.length === 1
-    ? (label ? `Result — ${label}` : 'Result')
-    : `Results (${picks.length.toLocaleString()} draws)`;
-
-  const wrap = document.getElementById('pick-results-wrap');
-
-  if (picks.length <= 50) {
-    const solo = picks.length === 1;
-    wrap.innerHTML = picks.map(v =>
-      `<span class="pick-bubble${solo ? ' solo' : ''}">${fmt(v)}</span>`
-    ).join('');
+  if (race.mean === null) {
+    document.getElementById('result-number').textContent = 'N/A';
+    unit.style.display = 'none';
+    badge.textContent = 'Consult Your DM';
+    badge.style.background = '#f1f5f9';
+    badge.style.color = '#94a3b8';
   } else {
-    // Frequency table for large pick sets
-    const freq = new Map();
-    for (const v of picks) freq.set(v, (freq.get(v) || 0) + 1);
-    const sorted = [...freq.entries()].sort((a, b) => a[0] - b[0]);
-    wrap.innerHTML = `
-      <div style="width:100%;overflow-x:auto;">
-        <table>
-          <thead><tr><th>Value</th><th>Count</th><th>%</th></tr></thead>
-          <tbody>${sorted.map(([v, c]) => `
-            <tr>
-              <td style="color:var(--text);font-weight:500">${fmt(v)}</td>
-              <td>${c}</td>
-              <td>${(c / picks.length * 100).toFixed(1)}%</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
+    unit.style.display = '';
+    let size;
+    do { size = normalRng(race.mean, race.std); } while (size < 0.5);
+    size = Math.round(size * 10) / 10;
+
+    const desc = DESCRIPTORS.find(d => size < d.max);
+    document.getElementById('result-number').textContent = size.toFixed(1);
+    badge.textContent = desc.label;
+    badge.style.background = desc.bg;
+    badge.style.color = desc.fg;
   }
+
+  card.classList.remove('hidden', 'animate');
+  void card.offsetWidth;
+  card.classList.add('animate');
 }
 
-
-// ─────────────────────────────────────────────────────────────────
-// Bootstrap
-// ─────────────────────────────────────────────────────────────────
-onDistChange();
+onRaceChange();
 </script>
 </body>
 </html>
