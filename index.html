@@ -251,6 +251,53 @@
       padding: 0 1px;
     }
 
+    /* ── Girth ───────────────────────────── */
+    .girth-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .girth-divider-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--light);
+      margin-bottom: 12px;
+    }
+    .girth-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .girth-circle-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+    }
+    .girth-circle {
+      border-radius: 50%;
+      transition: width 0.35s ease, height 0.35s ease,
+                  background 0.35s ease, box-shadow 0.35s ease;
+    }
+    .girth-size-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--light);
+    }
+    .girth-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
     /* ── Animation ─────────────────────────── */
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(10px); }
@@ -336,6 +383,18 @@
         </div>
         <div class="scale-lbls" id="scale-lbls"></div>
       </div>
+      <div class="girth-section hidden" id="girth-section">
+        <div class="girth-divider-label">Girth</div>
+        <div>
+          <span class="girth-number" id="girth-number"></span><span class="result-unit">in circ.</span>
+        </div>
+        <div class="result-badge" id="girth-badge"></div>
+        <div class="girth-circle-wrap">
+          <div class="girth-circle" id="girth-circle"></div>
+          <span class="girth-size-label">actual diameter &middot; 96 dpi</span>
+        </div>
+        <p class="girth-note hidden" id="girth-note"></p>
+      </div>
       <button class="reroll-btn" onclick="roll()">Roll Again</button>
     </div>
   </div>
@@ -355,51 +414,80 @@
 const RACES = {
   // ── Common ─────────────────────────────────────────────────────
   human:         { name: 'Human',            mean: 5.16, std: 0.65,
+    girth_mean: 4.70, girth_std: 0.50,
     desc: 'Reliably average. The unambiguous baseline of the multiverse.' },
   highelf:       { name: 'High Elf',         mean: 5.05, std: 0.52,
+    girth_mean: 4.10, girth_std: 0.38,
+    girthNote: 'Arcane grace renders them elegant — longer than most, yet notably slender.',
     desc: 'Graceful and precise in all things — including this.' },
   woodelf:       { name: 'Wood Elf',         mean: 4.90, std: 0.55,
+    girth_mean: 4.30, girth_std: 0.42,
     desc: 'In harmony with nature. Modest, agile, and entirely at peace with it.' },
   drow:          { name: 'Drow',             mean: 4.80, std: 0.55,
+    girth_mean: 4.20, girth_std: 0.40,
     desc: 'Dark, mysterious, and a touch below average. The cloak compensates.' },
   hilldwarf:     { name: 'Dwarf (Hill)',      mean: 3.85, std: 0.48,
+    girth_mean: 5.20, girth_std: 0.45,
+    girthNote: 'Dense and dependable. What is lost in length, the hill repays generously in girth.',
     desc: 'Stout in every dimension. Dense, resilient, thoroughly dependable.' },
   mountaindwarf: { name: 'Dwarf (Mountain)', mean: 4.00, std: 0.50,
+    girth_mean: 5.60, girth_std: 0.48,
+    girthNote: 'Stone-forged constitution yields the stockiest proportions in all the mountain ranges.',
     desc: 'Carved from the mountain. Proportioned accordingly.' },
   halfling:      { name: 'Halfling',         mean: 3.10, std: 0.65,
+    girth_mean: 3.50, girth_std: 0.35,
     desc: 'Small of stature. Enormous of confidence. Enormous.' },
   gnome:         { name: 'Gnome',            mean: 3.35, std: 0.40,
+    girth_mean: 3.20, girth_std: 0.32,
     desc: 'Cleverness compensates for a great many shortcomings. So they claim.' },
   halfelf:       { name: 'Half-Elf',         mean: 5.10, std: 0.65,
+    girth_mean: 4.60, girth_std: 0.50,
     desc: 'Best of both worlds. Mostly.' },
   halforc:       { name: 'Half-Orc',         mean: 5.80, std: 0.75,
+    girth_mean: 5.30, girth_std: 0.60,
     desc: 'Orcish heritage makes its presence known in all the expected places.' },
   tiefling:      { name: 'Tiefling',         mean: 5.20, std: 0.85,
+    girth_mean: 4.80, girth_std: 0.65,
     desc: 'Infernal variance. Devilishly unpredictable. Could go anywhere.' },
   dragonborn:    { name: 'Dragonborn',       mean: 5.95, std: 0.78,
+    girth_mean: 5.80, girth_std: 0.65,
+    girthNote: 'Draconic scale extends to every dimension. Scale — in the most literal sense.',
     desc: 'Draconic heritage lends a certain scale. Their pride is fully warranted.' },
   // ── Uncommon ───────────────────────────────────────────────────
   aasimar:       { name: 'Aasimar',          mean: 5.18, std: 0.62,
+    girth_mean: 4.80, girth_std: 0.50,
     desc: 'Divinely proportioned. As if by celestial design.' },
   bugbear:       { name: 'Bugbear',          mean: 6.50, std: 0.88,
+    girth_mean: 6.20, girth_std: 0.80,
     desc: 'They lurk in the shadows for multiple reasons. Now you know one more.' },
   firbolg:       { name: 'Firbolg',          mean: 6.70, std: 0.88,
+    girth_mean: 6.50, girth_std: 0.75,
     desc: 'Gentle giants in every respect. Every single respect.' },
   githyanki:     { name: 'Githyanki',        mean: 5.30, std: 0.68,
+    girth_mean: 4.90, girth_std: 0.55,
     desc: 'Militaristic discipline extends to every measurable dimension.' },
   goliath:       { name: 'Goliath',          mean: 7.10, std: 0.92,
+    girth_mean: 7.00, girth_std: 0.85,
+    girthNote: 'Proportional to everything else. Every stone-hewn, mountain-born inch of them.',
     desc: 'Proportional to everything else about them. Formidable in every regard.' },
   kobold:        { name: 'Kobold',           mean: 2.50, std: 0.33,
+    girth_mean: 2.80, girth_std: 0.30,
+    girthNote: 'What they lack in scale, they make up for in trap-building ingenuity.',
     desc: 'What they lack in size, they make up for in trap-building ingenuity.' },
   lizardfolk:    { name: 'Lizardfolk',       mean: 6.05, std: 0.80,
+    girth_mean: 5.50, girth_std: 0.70,
     desc: 'Hemipenes not modelled in this version. Consult a herpetologist.' },
   orc:           { name: 'Orc',              mean: 6.40, std: 0.85,
+    girth_mean: 6.00, girth_std: 0.70,
     desc: 'Impressive by any civilised standard. And most uncivilised ones.' },
   tabaxi:        { name: 'Tabaxi',           mean: 5.10, std: 0.70,
+    girth_mean: 4.40, girth_std: 0.55,
     desc: 'Retractable? The scholars remain divided. The Tabaxi are not forthcoming.' },
   tortle:        { name: 'Tortle',           mean: 5.00, std: 0.65,
+    girth_mean: 5.00, girth_std: 0.60,
     desc: 'Slow, steady, and — given the housing situation — surprisingly well-endowed.' },
   warforged:     { name: 'Warforged',        mean: null, std: null,
+    girth_mean: null, girth_std: null,
     desc: 'Built for war, not recreation. Consult your DM and a qualified blacksmith.' },
 };
 
@@ -412,6 +500,17 @@ const DESCRIPTORS = [
   { max:  6.6,      label: 'Above Average',  bg: '#fffbeb', fg: '#d97706' },
   { max:  7.6,      label: 'Impressive',     bg: '#fff7ed', fg: '#ea580c' },
   { max:  9.0,      label: 'Formidable',     bg: '#fef2f2', fg: '#dc2626' },
+  { max: Infinity,  label: 'Legendary',      bg: '#faf5ff', fg: '#9333ea' },
+];
+
+const GIRTH_DESCRIPTORS = [
+  { max:  2.5,      label: 'Thread-like',    bg: '#f1f5f9', fg: '#94a3b8' },
+  { max:  3.5,      label: 'Slender',        bg: '#eff6ff', fg: '#93c5fd' },
+  { max:  4.2,      label: 'Slim',           bg: '#eff6ff', fg: '#60a5fa' },
+  { max:  5.0,      label: 'Average',        bg: '#f0fdf4', fg: '#16a34a' },
+  { max:  5.8,      label: 'Thick',          bg: '#fffbeb', fg: '#d97706' },
+  { max:  6.8,      label: 'Girthy',         bg: '#fff7ed', fg: '#ea580c' },
+  { max:  8.0,      label: 'Formidable',     bg: '#fef2f2', fg: '#dc2626' },
   { max: Infinity,  label: 'Legendary',      bg: '#faf5ff', fg: '#9333ea' },
 ];
 
@@ -482,7 +581,9 @@ function roll() {
   const badge = document.getElementById('result-badge');
   const unit  = document.getElementById('result-unit');
 
-  const scaleWrap = document.getElementById('scale-wrap');
+  const scaleWrap    = document.getElementById('scale-wrap');
+  const girthSection = document.getElementById('girth-section');
+  const girthNote    = document.getElementById('girth-note');
 
   if (race.mean === null) {
     document.getElementById('result-number').textContent = 'N/A';
@@ -491,6 +592,7 @@ function roll() {
     badge.style.background = '#f1f5f9';
     badge.style.color = '#94a3b8';
     scaleWrap.classList.add('hidden');
+    girthSection.classList.add('hidden');
   } else {
     unit.style.display = '';
     let size;
@@ -504,6 +606,35 @@ function roll() {
     badge.style.color = desc.fg;
     renderScale(size);
     scaleWrap.classList.remove('hidden');
+
+    // Girth
+    let girth;
+    do { girth = rollDong(race.girth_mean, race.girth_std); } while (girth < 0.8);
+    girth = Math.round(girth * 10) / 10;
+
+    const diamPx = Math.round((girth / Math.PI) * 96);
+    const gdesc  = GIRTH_DESCRIPTORS.find(d => girth < d.max);
+
+    document.getElementById('girth-number').textContent = girth.toFixed(1);
+    const gbadge = document.getElementById('girth-badge');
+    gbadge.textContent      = gdesc.label;
+    gbadge.style.background = gdesc.bg;
+    gbadge.style.color      = gdesc.fg;
+
+    const circle = document.getElementById('girth-circle');
+    circle.style.width      = diamPx + 'px';
+    circle.style.height     = diamPx + 'px';
+    circle.style.background = `radial-gradient(circle at 35% 35%, #fff, ${gdesc.fg}bb 50%, ${gdesc.fg})`;
+    circle.style.boxShadow  = `0 4px 24px ${gdesc.fg}55`;
+
+    if (race.girthNote) {
+      girthNote.textContent = race.girthNote;
+      girthNote.classList.remove('hidden');
+    } else {
+      girthNote.classList.add('hidden');
+    }
+
+    girthSection.classList.remove('hidden');
   }
 
   card.classList.remove('hidden', 'animate');
