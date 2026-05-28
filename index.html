@@ -336,7 +336,6 @@
         </div>
         <div class="scale-lbls" id="scale-lbls"></div>
       </div>
-      <p class="result-flavor" id="result-flavor"></p>
       <button class="reroll-btn" onclick="roll()">Roll Again</button>
     </div>
   </div>
@@ -479,7 +478,6 @@ function roll() {
   const card = document.getElementById('result-card');
 
   document.getElementById('result-race').textContent = race.name.toUpperCase();
-  document.getElementById('result-flavor').textContent = race.desc;
 
   const badge = document.getElementById('result-badge');
   const unit  = document.getElementById('result-unit');
