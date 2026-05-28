@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Probabilistic Dongulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #3b82f6;
+      --blue-dark:   #2563eb;
+      --blue-bg:     #eff6ff;
+      --surface:     #f8fafc;
+      --border:      #e2e8f0;
+      --text:        #0f172a;
+      --text-muted:  #64748b;
+      --text-light:  #94a3b8;
+      --radius:      12px;
+      --radius-sm:   8px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ──────────────────────────────────────── */
+    header {
+      padding: 28px 0 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    header h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* ── Layout ──────────────────────────────────────── */
+    main { flex: 1; padding: 32px 0 56px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Controls Panel ──────────────────────────────── */
+    .controls-panel {
+      position: sticky;
+      top: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .card-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+      margin-bottom: 11px;
+    }
+
+    /* ── Form Controls ───────────────────────────────── */
+    .form-group { margin-bottom: 11px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .hint {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.77rem;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+
+    .dist-desc {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.1s;
+    }
+
+    .btn-primary:hover  { background: var(--blue-dark); }
+    .btn-primary:active { transform: scale(0.985); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fff;
+      color: var(--text-muted);
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .btn-secondary:hover { background: var(--surface); color: var(--text); }
+
+    /* ── Results Panel ───────────────────────────────── */
+    .results-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: 72px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+      color: var(--text-light);
+    }
+
+    .empty-icon { width: 48px; height: 48px; opacity: 0.3; }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .empty-state p { font-size: 0.84rem; line-height: 1.6; }
+
+    /* ── Stats Grid ──────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    /* ── Result Card Header ──────────────────────────── */
+    .result-card-header {
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-card-title {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+    }
+
+    /* ── Histogram ───────────────────────────────────── */
+    .chart-wrapper { padding: 20px; }
+
+    .chart-container {
+      position: relative;
+      height: 260px;
+    }
+
+    .bins-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bins-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .bins-value {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 22px;
+      text-align: right;
+    }
+
+    /* ── Data Table ──────────────────────────────────── */
+    .table-meta {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .table-actions { display: flex; gap: 6px; }
+
+    .table-scroll {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--surface);
+      padding: 9px 20px;
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td {
+      padding: 7px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody td:first-child { color: var(--text-light); font-size: 0.78rem; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #fafafa; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    /* ── Utilities ───────────────────────────────────── */
+    .hidden { display: none !important; }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .controls-panel { position: static; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      header h1 { font-size: 1.35rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Probabilistic Dongulator</h1>
+    <p>Generate and explore random samples from a variety of statistical distributions</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="layout">
+
+      <!-- ── Controls ── -->
+      <aside class="controls-panel">
+        <div class="card">
+
+          <div class="card-section">
+            <div class="section-label">Distribution</div>
+            <div class="form-group">
+              <select id="dist-select" onchange="onDistChange()">
+                <option value="uniform">Uniform</option>
+                <option value="normal" selected>Normal (Gaussian)</option>
+                <option value="lognormal">Log-Normal</option>
+                <option value="exponential">Exponential</option>
+                <option value="poisson">Poisson</option>
+                <option value="beta">Beta</option>
+                <option value="gamma">Gamma</option>
+                <option value="binomial">Binomial</option>
+                <option value="triangular">Triangular</option>
+                <option value="weibull">Weibull</option>
+                <option value="pareto">Pareto</option>
+                <option value="chisquared">Chi-Squared</option>
+              </select>
+              <p id="dist-desc" class="dist-desc"></p>
+            </div>
+          </div>
+
+          <div class="card-section">
+            <div class="section-label">Parameters</div>
+            <div id="params"></div>
+          </div>
+
+          <div class="card-section">
+            <div class="section-label">Sample Size</div>
+            <div class="form-group">
+              <input type="number" id="n-samples" value="1000" min="1" max="100000">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <button class="btn-primary" onclick="generate()">Generate Samples</button>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- ── Results ── -->
+      <section class="results-panel">
+
+        <div id="empty-state" class="card empty-state">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 3v18h18"/>
+            <path d="M7 16l4-4 4 4 4-8"/>
+          </svg>
+          <h3>No samples generated yet</h3>
+          <p>Select a distribution, configure its parameters,<br>and click <strong>Generate Samples</strong> to explore.</p>
+        </div>
+
+        <div id="stats-section" class="hidden">
+          <div class="stats-grid" id="stats-grid"></div>
+        </div>
+
+        <div id="chart-card" class="card hidden">
+          <div class="result-card-header">
+            <span class="result-card-title">Frequency Distribution</span>
+            <div class="bins-control">
+              <span class="bins-label">Bins</span>
+              <input type="range" id="bins-slider" min="5" max="100" value="30"
+                oninput="onBinsChange(this.value)">
+              <span class="bins-value" id="bins-val">30</span>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart-container">
+              <canvas id="hist-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div id="table-card" class="card hidden">
+          <div class="result-card-header">
+            <div>
+              <span class="result-card-title">Data</span>
+              <span class="table-meta" id="table-meta"></span>
+            </div>
+            <div class="table-actions">
+              <button class="btn-secondary" id="copy-btn" onclick="copyAll()">Copy</button>
+              <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Value</th></tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Probabilistic Dongulator &mdash; Interactive Statistical Distribution Explorer
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// Distribution definitions
+// ─────────────────────────────────────────────────────────────────
+const DISTS = {
+  uniform: {
+    label: 'Uniform',
+    desc: 'Every value between the minimum and maximum is equally likely. The simplest continuous distribution.',
+    params: [
+      { id: 'min', label: 'Minimum', hint: 'Lower bound', default: 0,  step: 'any' },
+      { id: 'max', label: 'Maximum', hint: 'Upper bound', default: 10, step: 'any' }
+    ],
+    sample(p) {
+      if (p.min >= p.max) throw new Error('Maximum must be greater than Minimum');
+      return p.min + Math.random() * (p.max - p.min);
+    }
+  },
+
+  normal: {
+    label: 'Normal (Gaussian)',
+    desc: 'The classic bell curve. Values cluster symmetrically around the mean, with spread controlled by the standard deviation.',
+    params: [
+      { id: 'mean', label: 'Mean (μ)',    hint: 'Center of the distribution',    default: 0, step: 'any' },
+      { id: 'std',  label: 'Std Dev (σ)', hint: 'Spread — must be > 0',          default: 1, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.std <= 0) throw new Error('Standard deviation must be > 0');
+      return normalRng(p.mean, p.std);
+    }
+  },
+
+  lognormal: {
+    label: 'Log-Normal',
+    desc: 'A variable whose natural logarithm is normally distributed. Always positive and right-skewed — common in finance and biology.',
+    params: [
+      { id: 'mu',    label: 'Log Mean (μ)',    hint: 'Mean of the underlying normal',         default: 0,   step: 'any' },
+      { id: 'sigma', label: 'Log Std Dev (σ)', hint: 'Std dev of the underlying normal, > 0', default: 0.5, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.sigma <= 0) throw new Error('σ must be > 0');
+      return Math.exp(normalRng(p.mu, p.sigma));
+    }
+  },
+
+  exponential: {
+    label: 'Exponential',
+    desc: 'Models the waiting time between events in a Poisson process. Memoryless and always positive.',
+    params: [
+      { id: 'rate', label: 'Rate (λ)', hint: 'Events per unit time — must be > 0', default: 1, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.rate <= 0) throw new Error('Rate must be > 0');
+      return -Math.log(1 - Math.random()) / p.rate;
+    }
+  },
+
+  poisson: {
+    label: 'Poisson',
+    desc: 'Counts the number of events in a fixed interval. Integer-valued and useful for modelling rare events.',
+    params: [
+      { id: 'lambda', label: 'Lambda (λ)', hint: 'Expected event count — must be > 0', default: 3, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.lambda <= 0) throw new Error('Lambda must be > 0');
+      return poissonRng(p.lambda);
+    }
+  },
+
+  beta: {
+    label: 'Beta',
+    desc: 'A flexible distribution bounded between 0 and 1. Perfect for modelling probabilities and proportions.',
+    params: [
+      { id: 'alpha', label: 'Alpha (α)', hint: 'Shape parameter — must be > 0', default: 2, step: 'any', min: 1e-9 },
+      { id: 'beta',  label: 'Beta (β)',  hint: 'Shape parameter — must be > 0', default: 5, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.alpha <= 0 || p.beta <= 0) throw new Error('Both shape parameters must be > 0');
+      return betaRng(p.alpha, p.beta);
+    }
+  },
+
+  gamma: {
+    label: 'Gamma',
+    desc: 'Generalises the exponential distribution. Controls how quickly events accumulate over time.',
+    params: [
+      { id: 'shape', label: 'Shape (k)', hint: 'Must be > 0', default: 2, step: 'any', min: 1e-9 },
+      { id: 'scale', label: 'Scale (θ)', hint: 'Must be > 0', default: 2, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.shape <= 0 || p.scale <= 0) throw new Error('Shape and scale must be > 0');
+      return gammaRng(p.shape, p.scale);
+    }
+  },
+
+  binomial: {
+    label: 'Binomial',
+    desc: 'Counts the number of successes in n independent trials, each with probability p. Integer-valued.',
+    params: [
+      { id: 'n', label: 'Trials (n)',       hint: 'Number of trials — integer ≥ 1', default: 20,  step: 1,     min: 1, max: 10000 },
+      { id: 'p', label: 'Probability (p)',  hint: 'Success probability — 0 to 1',   default: 0.4, step: 'any', min: 0, max: 1 }
+    ],
+    sample(p) {
+      const n = Math.round(p.n);
+      if (n < 1) throw new Error('n must be ≥ 1');
+      if (p.p < 0 || p.p > 1) throw new Error('p must be between 0 and 1');
+      return binomialRng(n, p.p);
+    }
+  },
+
+  triangular: {
+    label: 'Triangular',
+    desc: 'Defined by a minimum, a most-likely value (mode), and a maximum. Useful when only limited data is available.',
+    params: [
+      { id: 'a', label: 'Minimum (a)', hint: 'Lower bound',         default: 0,  step: 'any' },
+      { id: 'c', label: 'Mode (c)',    hint: 'Most likely value',    default: 5,  step: 'any' },
+      { id: 'b', label: 'Maximum (b)', hint: 'Upper bound',         default: 10, step: 'any' }
+    ],
+    sample(p) {
+      if (p.a >= p.b) throw new Error('Maximum must be greater than Minimum');
+      if (p.c < p.a || p.c > p.b) throw new Error('Mode must be between Min and Max');
+      return triangularRng(p.a, p.b, p.c);
+    }
+  },
+
+  weibull: {
+    label: 'Weibull',
+    desc: 'Widely used in reliability engineering and survival analysis. The shape parameter controls whether the failure rate increases or decreases over time.',
+    params: [
+      { id: 'scale', label: 'Scale (λ)', hint: 'Must be > 0', default: 1,   step: 'any', min: 1e-9 },
+      { id: 'shape', label: 'Shape (k)', hint: 'Must be > 0', default: 1.5, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.scale <= 0 || p.shape <= 0) throw new Error('Scale and shape must be > 0');
+      return p.scale * Math.pow(-Math.log(1 - Math.random()), 1 / p.shape);
+    }
+  },
+
+  pareto: {
+    label: 'Pareto',
+    desc: 'A heavy-tailed distribution — the basis of the 80/20 rule. Used to model wealth, city sizes, and many natural phenomena.',
+    params: [
+      { id: 'scale', label: 'Scale (xₘ)', hint: 'Minimum value — must be > 0', default: 1, step: 'any', min: 1e-9 },
+      { id: 'shape', label: 'Shape (α)',  hint: 'Tail index — must be > 0',    default: 2, step: 'any', min: 1e-9 }
+    ],
+    sample(p) {
+      if (p.scale <= 0 || p.shape <= 0) throw new Error('Scale and shape must be > 0');
+      return p.scale / Math.pow(Math.random(), 1 / p.shape);
+    }
+  },
+
+  chisquared: {
+    label: 'Chi-Squared',
+    desc: 'The sum of k squared standard-normal variables. Fundamental to statistical hypothesis testing and confidence intervals.',
+    params: [
+      { id: 'k', label: 'Degrees of Freedom (k)', hint: 'Positive integer', default: 3, step: 1, min: 1 }
+    ],
+    sample(p) {
+      if (p.k < 1) throw new Error('Degrees of freedom must be ≥ 1');
+      return gammaRng(Math.round(p.k) / 2, 2);
+    }
+  }
+};
+
+
+// ─────────────────────────────────────────────────────────────────
+// Random number generators
+// ─────────────────────────────────────────────────────────────────
+
+// Box-Muller transform
+function normalRng(mean, std) {
+  let u;
+  do { u = Math.random(); } while (u === 0);
+  const v = Math.random();
+  const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  return mean + std * z;
+}
+
+// Marsaglia-Tsang method
+function gammaRng(shape, scale) {
+  if (shape < 1) {
+    return gammaRng(1 + shape, scale) * Math.pow(Math.random(), 1 / shape);
+  }
+  const d = shape - 1 / 3;
+  const c = 1 / Math.sqrt(9 * d);
+  for (;;) {
+    let x, v;
+    do { x = normalRng(0, 1); v = 1 + c * x; } while (v <= 0);
+    v = v * v * v;
+    const u = Math.random();
+    if (u < 1 - 0.0331 * x * x * x * x) return d * v * scale;
+    if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v * scale;
+  }
+}
+
+function betaRng(alpha, beta) {
+  const x = gammaRng(alpha, 1);
+  const y = gammaRng(beta, 1);
+  return x / (x + y);
+}
+
+// Knuth algorithm for small λ, normal approximation for large
+function poissonRng(lambda) {
+  if (lambda > 30) return Math.max(0, Math.round(normalRng(lambda, Math.sqrt(lambda))));
+  const L = Math.exp(-lambda);
+  let k = 0, p = 1;
+  do { k++; p *= Math.random(); } while (p > L);
+  return k - 1;
+}
+
+// Exact for n ≤ 1000, normal approximation for larger n
+function binomialRng(n, p) {
+  if (n > 1000) {
+    const mean = n * p;
+    const std  = Math.sqrt(n * p * (1 - p));
+    if (std < 1e-9) return Math.round(mean);
+    return Math.max(0, Math.min(n, Math.round(normalRng(mean, std))));
+  }
+  let count = 0;
+  for (let i = 0; i < n; i++) if (Math.random() < p) count++;
+  return count;
+}
+
+// Inverse CDF
+function triangularRng(a, b, c) {
+  const u  = Math.random();
+  const fc = (c - a) / (b - a);
+  if (u < fc) return a + Math.sqrt(u * (b - a) * (c - a));
+  return b - Math.sqrt((1 - u) * (b - a) * (b - c));
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// App state
+// ─────────────────────────────────────────────────────────────────
+let data  = [];
+let chart = null;
+let bins  = 30;
+
+
+// ─────────────────────────────────────────────────────────────────
+// UI helpers
+// ─────────────────────────────────────────────────────────────────
+function onDistChange() {
+  const key  = document.getElementById('dist-select').value;
+  const dist = DISTS[key];
+  document.getElementById('dist-desc').textContent = dist.desc;
+
+  const container = document.getElementById('params');
+  container.innerHTML = '';
+
+  dist.params.forEach(p => {
+    const g = document.createElement('div');
+    g.className = 'form-group';
+    g.innerHTML = `
+      <label for="p-${p.id}">
+        ${p.label} <span class="hint">— ${p.hint}</span>
+      </label>
+      <input type="number" id="p-${p.id}" value="${p.default}" step="${p.step || 'any'}"
+        ${p.min !== undefined ? `min="${p.min}"` : ''}
+        ${p.max !== undefined ? `max="${p.max}"` : ''}>
+    `;
+    container.appendChild(g);
+  });
+
+  clearResults();
+}
+
+function clearResults() {
+  data = [];
+  document.getElementById('empty-state').classList.remove('hidden');
+  document.getElementById('stats-section').classList.add('hidden');
+  document.getElementById('chart-card').classList.add('hidden');
+  document.getElementById('table-card').classList.add('hidden');
+  if (chart) { chart.destroy(); chart = null; }
+}
+
+function getParams() {
+  const key    = document.getElementById('dist-select').value;
+  const params = {};
+  DISTS[key].params.forEach(p => {
+    params[p.id] = parseFloat(document.getElementById(`p-${p.id}`).value);
+  });
+  return params;
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// Generate
+// ─────────────────────────────────────────────────────────────────
+function generate() {
+  const key  = document.getElementById('dist-select').value;
+  const dist = DISTS[key];
+  const p    = getParams();
+  const n    = Math.max(1, Math.min(100000, parseInt(document.getElementById('n-samples').value) || 1000));
+
+  try {
+    const result = [];
+    for (let i = 0; i < n; i++) result.push(dist.sample(p));
+    data = result;
+    render();
+  } catch (e) {
+    alert('Parameter error: ' + e.message);
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// Render
+// ─────────────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('stats-section').classList.remove('hidden');
+  document.getElementById('chart-card').classList.remove('hidden');
+  document.getElementById('table-card').classList.remove('hidden');
+  renderStats();
+  renderHistogram();
+  renderTable();
+}
+
+// Format a number to at most 5 significant figures, using exponential for large/tiny values
+function fmt(n) {
+  if (!isFinite(n)) return '—';
+  const a = Math.abs(n);
+  if (a === 0) return '0';
+  if (a >= 1e6 || (a < 0.001)) return n.toExponential(3);
+  return parseFloat(n.toPrecision(5)).toString();
+}
+
+function computeStats(arr) {
+  const n = arr.length;
+  let sum = 0, min = Infinity, max = -Infinity;
+  for (const v of arr) {
+    sum += v;
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+  const mean = sum / n;
+  let variance = 0;
+  for (const v of arr) variance += (v - mean) ** 2;
+  variance /= n;
+
+  const sorted = [...arr].sort((a, b) => a - b);
+  const median = n % 2 === 0
+    ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2
+    : sorted[Math.floor(n / 2)];
+  const q1 = sorted[Math.floor(n * 0.25)];
+  const q3 = sorted[Math.floor(n * 0.75)];
+
+  return { n, mean, median, std: Math.sqrt(variance), variance, min, max, q1, q3 };
+}
+
+function renderStats() {
+  const s = computeStats(data);
+  const items = [
+    { label: 'Count',    value: s.n.toLocaleString() },
+    { label: 'Mean',     value: fmt(s.mean) },
+    { label: 'Median',   value: fmt(s.median) },
+    { label: 'Std Dev',  value: fmt(s.std) },
+    { label: 'Variance', value: fmt(s.variance) },
+    { label: 'Min',      value: fmt(s.min) },
+    { label: 'Max',      value: fmt(s.max) },
+    { label: 'IQR',      value: fmt(s.q3 - s.q1) },
+  ];
+  document.getElementById('stats-grid').innerHTML = items.map(i => `
+    <div class="stat-card">
+      <div class="stat-label">${i.label}</div>
+      <div class="stat-value">${i.value}</div>
+    </div>
+  `).join('');
+}
+
+function buildHistogram(arr, numBins) {
+  let min = Infinity, max = -Infinity;
+  for (const v of arr) { if (v < min) min = v; if (v > max) max = v; }
+  if (min === max) max = min + 1;
+
+  const width  = (max - min) / numBins;
+  const counts = new Array(numBins).fill(0);
+  for (const v of arr) {
+    let idx = Math.floor((v - min) / width);
+    if (idx >= numBins) idx = numBins - 1;
+    if (idx < 0)        idx = 0;
+    counts[idx]++;
+  }
+  const labels = counts.map((_, i) => fmt(min + i * width));
+  return { labels, counts, min, width };
+}
+
+function renderHistogram() {
+  const { labels, counts, min, width } = buildHistogram(data, bins);
+
+  if (chart) chart.destroy();
+  const ctx = document.getElementById('hist-canvas').getContext('2d');
+
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: 'rgba(59,130,246,0.60)',
+        borderColor:     'rgba(59,130,246,0.85)',
+        borderWidth: 1,
+        borderRadius: 2,
+        barPercentage: 1.0,
+        categoryPercentage: 1.0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 220 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => {
+              const i = items[0].dataIndex;
+              return `${fmt(min + i * width)} – ${fmt(min + (i + 1) * width)}`;
+            },
+            label: (item) =>
+              `Count: ${item.raw.toLocaleString()}  (${(item.raw / data.length * 100).toFixed(1)}%)`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { color: '#e2e8f0' },
+          ticks: {
+            maxTicksLimit: 9,
+            font: { size: 11, family: "'Inter', system-ui" },
+            color: '#94a3b8'
+          }
+        },
+        y: {
+          grid: { color: '#f1f5f9' },
+          border: { display: false },
+          ticks: {
+            font: { size: 11, family: "'Inter', system-ui" },
+            color: '#94a3b8'
+          },
+          title: {
+            display: true,
+            text: 'Frequency',
+            font: { size: 11, family: "'Inter', system-ui" },
+            color: '#94a3b8'
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderTable() {
+  const max = Math.min(data.length, 500);
+  document.getElementById('table-meta').textContent =
+    data.length > 500
+      ? ` — showing first 500 of ${data.length.toLocaleString()}`
+      : ` — ${data.length.toLocaleString()} values`;
+
+  document.getElementById('table-body').innerHTML =
+    data.slice(0, max).map((v, i) => `
+      <tr><td>${i + 1}</td><td>${fmt(v)}</td></tr>
+    `).join('');
+}
+
+function onBinsChange(val) {
+  bins = parseInt(val);
+  document.getElementById('bins-val').textContent = val;
+  if (data.length > 0) renderHistogram();
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// Export / Copy
+// ─────────────────────────────────────────────────────────────────
+function copyAll() {
+  navigator.clipboard.writeText(data.join('\n')).then(() => {
+    const btn  = document.getElementById('copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1600);
+  });
+}
+
+function exportCSV() {
+  const key  = document.getElementById('dist-select').value;
+  const csv  = 'index,value\n' + data.map((v, i) => `${i + 1},${v}`).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `dongulator-${key}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// Bootstrap
+// ─────────────────────────────────────────────────────────────────
+onDistChange();
+</script>
+</body>
+</html>
