@@ -202,6 +202,8 @@
     .scale-track {
       position: relative;
       padding-top: 10px;
+      cursor: ew-resize;
+      user-select: none;
     }
     .scale-bar {
       display: flex;
@@ -215,7 +217,8 @@
       top: 0;
       left: 0;
       transform: translateX(-50%);
-      transition: left 0.3s ease;
+      transition: left 0.12s ease;
+      pointer-events: none;
     }
     .scale-pointer::before {
       content: '';
@@ -377,7 +380,7 @@
       </div>
       <div class="result-badge" id="result-badge"></div>
       <div class="scale-wrap hidden" id="scale-wrap">
-        <div class="scale-track">
+        <div class="scale-track" id="length-track">
           <div class="scale-bar" id="scale-bar"></div>
           <div class="scale-pointer" id="scale-pointer"></div>
         </div>
@@ -389,6 +392,13 @@
           <span class="girth-number" id="girth-number"></span><span class="result-unit">in circ.</span>
         </div>
         <div class="result-badge" id="girth-badge"></div>
+        <div class="scale-wrap" id="girth-scale-wrap">
+          <div class="scale-track" id="girth-track">
+            <div class="scale-bar" id="girth-scale-bar"></div>
+            <div class="scale-pointer" id="girth-scale-pointer"></div>
+          </div>
+          <div class="scale-lbls" id="girth-scale-lbls"></div>
+        </div>
         <div class="girth-circle-wrap">
           <div class="girth-circle" id="girth-circle"></div>
           <span class="girth-size-label">actual diameter &middot; 96 dpi</span>
@@ -533,34 +543,78 @@ function rollDong(mean, std) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Scale renderer
+// Scale config
 // ─────────────────────────────────────────────────────────────────
-const SCALE_MIN = 1.0;
-const SCALE_MAX = 10.0;
+const L_MIN = 1.0, L_MAX = 10.0;
+const G_MIN = 1.0, G_MAX =  9.0;
 
-function renderScale(value) {
-  const range = SCALE_MAX - SCALE_MIN;
-  let barSegs = '';
-  let lblSegs = '';
-
-  for (let i = 0; i < DESCRIPTORS.length; i++) {
-    const d = DESCRIPTORS[i];
-    const lo = i === 0 ? SCALE_MIN : Math.max(SCALE_MIN, DESCRIPTORS[i - 1].max);
-    const hi = d.max === Infinity ? SCALE_MAX : Math.min(d.max, SCALE_MAX);
+function renderScale(value, descriptors, scaleMin, scaleMax, barId, lblsId, pointerId) {
+  const range = scaleMax - scaleMin;
+  let barSegs = '', lblSegs = '';
+  for (let i = 0; i < descriptors.length; i++) {
+    const d  = descriptors[i];
+    const lo = i === 0 ? scaleMin : Math.max(scaleMin, descriptors[i - 1].max);
+    const hi = d.max === Infinity ? scaleMax : Math.min(d.max, scaleMax);
     if (hi <= lo) continue;
     const pct = ((hi - lo) / range * 100).toFixed(2);
     barSegs += `<div class="scale-seg" style="width:${pct}%;background:${d.bg}"></div>`;
     lblSegs += `<div class="scale-lbl" style="width:${pct}%;color:${d.fg}">${d.label}</div>`;
   }
-
-  const clampedVal = Math.max(SCALE_MIN, Math.min(SCALE_MAX, value));
-  const needlePct  = ((clampedVal - SCALE_MIN) / range * 100).toFixed(2);
-
-  document.getElementById('scale-bar').innerHTML     = barSegs;
-  document.getElementById('scale-lbls').innerHTML    = lblSegs;
-  document.getElementById('scale-pointer').style.left = needlePct + '%';
+  const clamped = Math.max(scaleMin, Math.min(scaleMax, value));
+  document.getElementById(barId).innerHTML      = barSegs;
+  document.getElementById(lblsId).innerHTML     = lblSegs;
+  document.getElementById(pointerId).style.left = ((clamped - scaleMin) / range * 100).toFixed(2) + '%';
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Display helpers — update UI for a given length or girth value
+// ─────────────────────────────────────────────────────────────────
+function applyLength(val) {
+  val = Math.round(val * 10) / 10;
+  const desc = DESCRIPTORS.find(d => val < d.max);
+  document.getElementById('result-number').textContent = val.toFixed(1);
+  const badge = document.getElementById('result-badge');
+  badge.textContent      = desc.label;
+  badge.style.background = desc.bg;
+  badge.style.color      = desc.fg;
+  renderScale(val, DESCRIPTORS, L_MIN, L_MAX, 'scale-bar', 'scale-lbls', 'scale-pointer');
+}
+
+function applyGirth(val) {
+  val = Math.round(val * 10) / 10;
+  const gdesc  = GIRTH_DESCRIPTORS.find(d => val < d.max);
+  const diamPx = Math.round((val / Math.PI) * 96);
+  document.getElementById('girth-number').textContent = val.toFixed(1);
+  const gbadge = document.getElementById('girth-badge');
+  gbadge.textContent      = gdesc.label;
+  gbadge.style.background = gdesc.bg;
+  gbadge.style.color      = gdesc.fg;
+  const circle = document.getElementById('girth-circle');
+  circle.style.width      = diamPx + 'px';
+  circle.style.height     = diamPx + 'px';
+  circle.style.background = `radial-gradient(circle at 35% 35%, #fff, ${gdesc.fg}bb 50%, ${gdesc.fg})`;
+  circle.style.boxShadow  = `0 4px 24px ${gdesc.fg}55`;
+  renderScale(val, GIRTH_DESCRIPTORS, G_MIN, G_MAX, 'girth-scale-bar', 'girth-scale-lbls', 'girth-scale-pointer');
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Draggable scale tracks
+// ─────────────────────────────────────────────────────────────────
+function makeDraggable(trackEl, scaleMin, scaleMax, callback) {
+  function valueAt(e) {
+    const rect = trackEl.getBoundingClientRect();
+    const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    return scaleMin + frac * (scaleMax - scaleMin);
+  }
+  trackEl.addEventListener('pointerdown', e => {
+    trackEl.setPointerCapture(e.pointerId);
+    callback(valueAt(e));
+  });
+  trackEl.addEventListener('pointermove', e => {
+    if (!e.buttons) return;
+    callback(valueAt(e));
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────
 // UI
@@ -578,9 +632,7 @@ function roll() {
 
   document.getElementById('result-race').textContent = race.name.toUpperCase();
 
-  const badge = document.getElementById('result-badge');
-  const unit  = document.getElementById('result-unit');
-
+  const unit         = document.getElementById('result-unit');
   const scaleWrap    = document.getElementById('scale-wrap');
   const girthSection = document.getElementById('girth-section');
   const girthNote    = document.getElementById('girth-note');
@@ -588,44 +640,23 @@ function roll() {
   if (race.mean === null) {
     document.getElementById('result-number').textContent = 'N/A';
     unit.style.display = 'none';
-    badge.textContent = 'Consult Your DM';
+    const badge = document.getElementById('result-badge');
+    badge.textContent      = 'Consult Your DM';
     badge.style.background = '#f1f5f9';
-    badge.style.color = '#94a3b8';
+    badge.style.color      = '#94a3b8';
     scaleWrap.classList.add('hidden');
     girthSection.classList.add('hidden');
   } else {
     unit.style.display = '';
+
     let size, sAttempts = 0;
     do { size = rollDong(race.mean, race.std); sAttempts++; } while ((size < race.min || size > race.max) && sAttempts < 100);
-    size = Math.round(Math.max(race.min, Math.min(race.max, size)) * 10) / 10;
-
-    const desc = DESCRIPTORS.find(d => size < d.max);
-    document.getElementById('result-number').textContent = size.toFixed(1);
-    badge.textContent = desc.label;
-    badge.style.background = desc.bg;
-    badge.style.color = desc.fg;
-    renderScale(size);
+    applyLength(Math.max(race.min, Math.min(race.max, size)));
     scaleWrap.classList.remove('hidden');
 
-    // Girth
     let girth, gAttempts = 0;
     do { girth = rollDong(race.girth_mean, race.girth_std); gAttempts++; } while ((girth < race.girth_min || girth > race.girth_max) && gAttempts < 100);
-    girth = Math.round(Math.max(race.girth_min, Math.min(race.girth_max, girth)) * 10) / 10;
-
-    const diamPx = Math.round((girth / Math.PI) * 96);
-    const gdesc  = GIRTH_DESCRIPTORS.find(d => girth < d.max);
-
-    document.getElementById('girth-number').textContent = girth.toFixed(1);
-    const gbadge = document.getElementById('girth-badge');
-    gbadge.textContent      = gdesc.label;
-    gbadge.style.background = gdesc.bg;
-    gbadge.style.color      = gdesc.fg;
-
-    const circle = document.getElementById('girth-circle');
-    circle.style.width      = diamPx + 'px';
-    circle.style.height     = diamPx + 'px';
-    circle.style.background = `radial-gradient(circle at 35% 35%, #fff, ${gdesc.fg}bb 50%, ${gdesc.fg})`;
-    circle.style.boxShadow  = `0 4px 24px ${gdesc.fg}55`;
+    applyGirth(Math.max(race.girth_min, Math.min(race.girth_max, girth)));
 
     if (race.girthNote) {
       girthNote.textContent = race.girthNote;
@@ -633,7 +664,6 @@ function roll() {
     } else {
       girthNote.classList.add('hidden');
     }
-
     girthSection.classList.remove('hidden');
   }
 
@@ -642,6 +672,8 @@ function roll() {
   card.classList.add('animate');
 }
 
+makeDraggable(document.getElementById('length-track'), L_MIN, L_MAX, val => applyLength(val));
+makeDraggable(document.getElementById('girth-track'),  G_MIN, G_MAX, val => applyGirth(val));
 onRaceChange();
 </script>
 </body>
