@@ -428,9 +428,10 @@ function normalRng(mean, std) {
   return mean + std * z;
 }
 
-// More random (1.25× std) and slightly skewed higher (+0.3 std shift)
+// Wide variance (2.0× std) and slightly skewed higher (+0.3 std shift)
+// Keeps extreme values (micropenis / 10"+) rare but reachable, matching real-world tail probability
 function rollDong(mean, std) {
-  return normalRng(mean + std * 0.3, std * 1.25);
+  return normalRng(mean + std * 0.3, std * 2.0);
 }
 
 // ─────────────────────────────────────────────────────────────────
