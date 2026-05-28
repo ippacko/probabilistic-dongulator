@@ -403,8 +403,6 @@
           <div class="girth-circle" id="girth-circle"></div>
           <span class="girth-size-label">actual diameter &middot; 96 dpi</span>
         </div>
-        <p class="girth-note hidden" id="girth-note"></p>
-      </div>
       <button class="reroll-btn" onclick="roll()">Roll Again</button>
     </div>
   </div>
@@ -425,7 +423,7 @@ const RACES = {
   // ── Common ─────────────────────────────────────────────────────
   human:         { name: 'Human',            mean: 5.16, std: 0.65,  min: 1.5,  max: 11.0,
     girth_mean: 4.70, girth_std: 0.38, girth_min: 2.5,  girth_max:  9.0,
-    desc: 'Reliably average. The unambiguous baseline of the multiverse.' },
+    desc: 'The unambiguous baseline of the multiverse.' },
   highelf:       { name: 'High Elf',         mean: 5.05, std: 0.52,  min: 2.0,  max: 12.0,
     girth_mean: 4.10, girth_std: 0.29, girth_min: 2.0,  girth_max:  7.0,
     girthNote: 'Arcane grace renders them elegant — longer than most, yet notably slender.',
@@ -635,7 +633,6 @@ function roll() {
   const unit         = document.getElementById('result-unit');
   const scaleWrap    = document.getElementById('scale-wrap');
   const girthSection = document.getElementById('girth-section');
-  const girthNote    = document.getElementById('girth-note');
 
   if (race.mean === null) {
     document.getElementById('result-number').textContent = 'N/A';
@@ -658,12 +655,6 @@ function roll() {
     do { girth = rollDong(race.girth_mean, race.girth_std); gAttempts++; } while ((girth < race.girth_min || girth > race.girth_max) && gAttempts < 100);
     applyGirth(Math.max(race.girth_min, Math.min(race.girth_max, girth)));
 
-    if (race.girthNote) {
-      girthNote.textContent = race.girthNote;
-      girthNote.classList.remove('hidden');
-    } else {
-      girthNote.classList.add('hidden');
-    }
     girthSection.classList.remove('hidden');
   }
 
