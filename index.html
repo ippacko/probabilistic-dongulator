@@ -366,6 +366,12 @@
           <option value="tortle">Tortle</option>
           <option value="warforged">Warforged</option>
         </optgroup>
+        <optgroup label="Genasi">
+          <option value="genasifire">Genasi (Fire)</option>
+          <option value="genasiwater">Genasi (Water)</option>
+          <option value="genasiearth">Genasi (Earth)</option>
+          <option value="genasiair">Genasi (Air)</option>
+        </optgroup>
       </select>
       <p class="race-desc" id="race-desc"></p>
       <button class="roll-btn" onclick="roll()">🎲 Roll the Dongulator</button>
@@ -497,6 +503,18 @@ const RACES = {
   warforged:     { name: 'Warforged',        mean: null, std: null,  min: null, max: null,
     girth_mean: null, girth_std: null, girth_min: null, girth_max: null,
     desc: 'Built for war, not recreation. Consult your DM and a qualified blacksmith.' },
+  genasifire:    { name: 'Genasi (Fire)',     mean: 5.55, std: 0.75,  min: 2.0,  max: 11.0,
+    girth_mean: 5.10, girth_std: 0.50, girth_min: 2.5,  girth_max:  9.5,
+    desc: 'Runs hot. In every sense.' },
+  genasiwater:   { name: 'Genasi (Water)',    mean: 5.20, std: 0.65,  min: 1.5,  max: 10.5,
+    girth_mean: 4.60, girth_std: 0.42, girth_min: 2.0,  girth_max:  8.5,
+    desc: 'Fluid, adaptable, and surprisingly well-suited to any situation.' },
+  genasiearth:   { name: 'Genasi (Earth)',    mean: 4.40, std: 0.60,  min: 1.5,  max:  8.0,
+    girth_mean: 5.80, girth_std: 0.48, girth_min: 3.0,  girth_max: 10.0,
+    desc: 'Shorter than expected, denser than imagined. Like granite.' },
+  genasiair:     { name: 'Genasi (Air)',      mean: 5.00, std: 0.70,  min: 1.5,  max: 10.0,
+    girth_mean: 4.00, girth_std: 0.40, girth_min: 2.0,  girth_max:  7.0,
+    desc: 'Lithe, ethereal, and barely there — in a way that somehow still impresses.' },
 };
 
 const DESCRIPTORS = [
