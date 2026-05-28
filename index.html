@@ -672,8 +672,18 @@ function roll() {
   card.classList.add('animate');
 }
 
-makeDraggable(document.getElementById('length-track'), L_MIN, L_MAX, val => applyLength(val));
-makeDraggable(document.getElementById('girth-track'),  G_MIN, G_MAX, val => applyGirth(val));
+function currentRace() { return RACES[document.getElementById('race-select').value]; }
+
+makeDraggable(document.getElementById('length-track'), L_MIN, L_MAX, val => {
+  const r = currentRace();
+  if (r && r.min !== null) val = Math.max(r.min, Math.min(r.max, val));
+  applyLength(val);
+});
+makeDraggable(document.getElementById('girth-track'), G_MIN, G_MAX, val => {
+  const r = currentRace();
+  if (r && r.girth_min !== null) val = Math.max(r.girth_min, Math.min(r.girth_max, val));
+  applyGirth(val);
+});
 onRaceChange();
 </script>
 </body>
