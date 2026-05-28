@@ -413,81 +413,81 @@
 // ─────────────────────────────────────────────────────────────────
 const RACES = {
   // ── Common ─────────────────────────────────────────────────────
-  human:         { name: 'Human',            mean: 5.16, std: 0.65,
-    girth_mean: 4.70, girth_std: 0.50,
+  human:         { name: 'Human',            mean: 5.16, std: 0.65,  min: 1.0,  max: 12.0,
+    girth_mean: 4.70, girth_std: 0.38, girth_min: 2.0,  girth_max: 10.0,
     desc: 'Reliably average. The unambiguous baseline of the multiverse.' },
-  highelf:       { name: 'High Elf',         mean: 5.05, std: 0.52,
-    girth_mean: 4.10, girth_std: 0.38,
+  highelf:       { name: 'High Elf',         mean: 5.05, std: 0.52,  min: 1.5,  max: 11.0,
+    girth_mean: 4.10, girth_std: 0.29, girth_min: 2.0,  girth_max:  8.0,
     girthNote: 'Arcane grace renders them elegant — longer than most, yet notably slender.',
     desc: 'Graceful and precise in all things — including this.' },
-  woodelf:       { name: 'Wood Elf',         mean: 4.90, std: 0.55,
-    girth_mean: 4.30, girth_std: 0.42,
+  woodelf:       { name: 'Wood Elf',         mean: 4.90, std: 0.55,  min: 1.5,  max: 10.5,
+    girth_mean: 4.30, girth_std: 0.32, girth_min: 2.0,  girth_max:  8.5,
     desc: 'In harmony with nature. Modest, agile, and entirely at peace with it.' },
-  drow:          { name: 'Drow',             mean: 4.80, std: 0.55,
-    girth_mean: 4.20, girth_std: 0.40,
+  drow:          { name: 'Drow',             mean: 4.80, std: 0.55,  min: 1.5,  max: 10.5,
+    girth_mean: 4.20, girth_std: 0.30, girth_min: 2.0,  girth_max:  8.0,
     desc: 'Dark, mysterious, and a touch below average. The cloak compensates.' },
-  hilldwarf:     { name: 'Dwarf (Hill)',      mean: 3.85, std: 0.48,
-    girth_mean: 5.20, girth_std: 0.45,
+  hilldwarf:     { name: 'Dwarf (Hill)',      mean: 3.85, std: 0.48,  min: 1.0,  max:  8.5,
+    girth_mean: 5.20, girth_std: 0.34, girth_min: 2.5,  girth_max: 10.0,
     girthNote: 'Dense and dependable. What is lost in length, the hill repays generously in girth.',
     desc: 'Stout in every dimension. Dense, resilient, thoroughly dependable.' },
-  mountaindwarf: { name: 'Dwarf (Mountain)', mean: 4.00, std: 0.50,
-    girth_mean: 5.60, girth_std: 0.48,
+  mountaindwarf: { name: 'Dwarf (Mountain)', mean: 4.00, std: 0.50,  min: 1.0,  max:  9.0,
+    girth_mean: 5.60, girth_std: 0.36, girth_min: 3.0,  girth_max: 11.0,
     girthNote: 'Stone-forged constitution yields the stockiest proportions in all the mountain ranges.',
     desc: 'Carved from the mountain. Proportioned accordingly.' },
-  halfling:      { name: 'Halfling',         mean: 3.10, std: 0.65,
-    girth_mean: 3.50, girth_std: 0.35,
+  halfling:      { name: 'Halfling',         mean: 3.10, std: 0.65,  min: 0.8,  max:  8.0,
+    girth_mean: 3.50, girth_std: 0.26, girth_min: 1.5,  girth_max:  7.0,
     desc: 'Small of stature. Enormous of confidence. Enormous.' },
-  gnome:         { name: 'Gnome',            mean: 3.35, std: 0.40,
-    girth_mean: 3.20, girth_std: 0.32,
+  gnome:         { name: 'Gnome',            mean: 3.35, std: 0.40,  min: 0.8,  max:  7.5,
+    girth_mean: 3.20, girth_std: 0.24, girth_min: 1.5,  girth_max:  6.5,
     desc: 'Cleverness compensates for a great many shortcomings. So they claim.' },
-  halfelf:       { name: 'Half-Elf',         mean: 5.10, std: 0.65,
-    girth_mean: 4.60, girth_std: 0.50,
+  halfelf:       { name: 'Half-Elf',         mean: 5.10, std: 0.65,  min: 1.0,  max: 12.0,
+    girth_mean: 4.60, girth_std: 0.38, girth_min: 2.0,  girth_max: 10.0,
     desc: 'Best of both worlds. Mostly.' },
-  halforc:       { name: 'Half-Orc',         mean: 5.80, std: 0.75,
-    girth_mean: 5.30, girth_std: 0.60,
+  halforc:       { name: 'Half-Orc',         mean: 5.80, std: 0.75,  min: 2.0,  max: 13.0,
+    girth_mean: 5.30, girth_std: 0.45, girth_min: 2.5,  girth_max: 11.0,
     desc: 'Orcish heritage makes its presence known in all the expected places.' },
-  tiefling:      { name: 'Tiefling',         mean: 5.20, std: 0.85,
-    girth_mean: 4.80, girth_std: 0.65,
+  tiefling:      { name: 'Tiefling',         mean: 5.20, std: 0.85,  min: 1.0,  max: 13.0,
+    girth_mean: 4.80, girth_std: 0.49, girth_min: 1.5,  girth_max: 11.0,
     desc: 'Infernal variance. Devilishly unpredictable. Could go anywhere.' },
-  dragonborn:    { name: 'Dragonborn',       mean: 5.95, std: 0.78,
-    girth_mean: 5.80, girth_std: 0.65,
+  dragonborn:    { name: 'Dragonborn',       mean: 5.95, std: 0.78,  min: 2.5,  max: 14.0,
+    girth_mean: 5.80, girth_std: 0.49, girth_min: 3.0,  girth_max: 13.0,
     girthNote: 'Draconic scale extends to every dimension. Scale — in the most literal sense.',
     desc: 'Draconic heritage lends a certain scale. Their pride is fully warranted.' },
   // ── Uncommon ───────────────────────────────────────────────────
-  aasimar:       { name: 'Aasimar',          mean: 5.18, std: 0.62,
-    girth_mean: 4.80, girth_std: 0.50,
+  aasimar:       { name: 'Aasimar',          mean: 5.18, std: 0.62,  min: 1.5,  max: 12.0,
+    girth_mean: 4.80, girth_std: 0.38, girth_min: 2.0,  girth_max: 10.0,
     desc: 'Divinely proportioned. As if by celestial design.' },
-  bugbear:       { name: 'Bugbear',          mean: 6.50, std: 0.88,
-    girth_mean: 6.20, girth_std: 0.80,
+  bugbear:       { name: 'Bugbear',          mean: 6.50, std: 0.88,  min: 3.0,  max: 14.0,
+    girth_mean: 6.20, girth_std: 0.60, girth_min: 3.5,  girth_max: 13.0,
     desc: 'They lurk in the shadows for multiple reasons. Now you know one more.' },
-  firbolg:       { name: 'Firbolg',          mean: 6.70, std: 0.88,
-    girth_mean: 6.50, girth_std: 0.75,
+  firbolg:       { name: 'Firbolg',          mean: 6.70, std: 0.88,  min: 3.0,  max: 14.5,
+    girth_mean: 6.50, girth_std: 0.56, girth_min: 3.5,  girth_max: 13.5,
     desc: 'Gentle giants in every respect. Every single respect.' },
-  githyanki:     { name: 'Githyanki',        mean: 5.30, std: 0.68,
-    girth_mean: 4.90, girth_std: 0.55,
+  githyanki:     { name: 'Githyanki',        mean: 5.30, std: 0.68,  min: 2.0,  max: 12.0,
+    girth_mean: 4.90, girth_std: 0.41, girth_min: 2.0,  girth_max: 10.0,
     desc: 'Militaristic discipline extends to every measurable dimension.' },
-  goliath:       { name: 'Goliath',          mean: 7.10, std: 0.92,
-    girth_mean: 7.00, girth_std: 0.85,
+  goliath:       { name: 'Goliath',          mean: 7.10, std: 0.92,  min: 4.5,  max: 15.0,
+    girth_mean: 7.00, girth_std: 0.64, girth_min: 4.0,  girth_max: 15.0,
     girthNote: 'Proportional to everything else. Every stone-hewn, mountain-born inch of them.',
     desc: 'Proportional to everything else about them. Formidable in every regard.' },
-  kobold:        { name: 'Kobold',           mean: 2.50, std: 0.33,
-    girth_mean: 2.80, girth_std: 0.30,
+  kobold:        { name: 'Kobold',           mean: 2.50, std: 0.33,  min: 0.5,  max:  6.0,
+    girth_mean: 2.80, girth_std: 0.23, girth_min: 1.0,  girth_max:  6.0,
     girthNote: 'What they lack in scale, they make up for in trap-building ingenuity.',
     desc: 'What they lack in size, they make up for in trap-building ingenuity.' },
-  lizardfolk:    { name: 'Lizardfolk',       mean: 6.05, std: 0.80,
-    girth_mean: 5.50, girth_std: 0.70,
+  lizardfolk:    { name: 'Lizardfolk',       mean: 6.05, std: 0.80,  min: 2.5,  max: 13.0,
+    girth_mean: 5.50, girth_std: 0.53, girth_min: 2.5,  girth_max: 11.0,
     desc: 'Hemipenes not modelled in this version. Consult a herpetologist.' },
-  orc:           { name: 'Orc',              mean: 6.40, std: 0.85,
-    girth_mean: 6.00, girth_std: 0.70,
+  orc:           { name: 'Orc',              mean: 6.40, std: 0.85,  min: 2.5,  max: 14.0,
+    girth_mean: 6.00, girth_std: 0.53, girth_min: 3.0,  girth_max: 12.0,
     desc: 'Impressive by any civilised standard. And most uncivilised ones.' },
-  tabaxi:        { name: 'Tabaxi',           mean: 5.10, std: 0.70,
-    girth_mean: 4.40, girth_std: 0.55,
+  tabaxi:        { name: 'Tabaxi',           mean: 5.10, std: 0.70,  min: 1.5,  max: 11.0,
+    girth_mean: 4.40, girth_std: 0.41, girth_min: 2.0,  girth_max:  9.0,
     desc: 'Retractable? The scholars remain divided. The Tabaxi are not forthcoming.' },
-  tortle:        { name: 'Tortle',           mean: 5.00, std: 0.65,
-    girth_mean: 5.00, girth_std: 0.60,
+  tortle:        { name: 'Tortle',           mean: 5.00, std: 0.65,  min: 1.5,  max: 11.0,
+    girth_mean: 5.00, girth_std: 0.45, girth_min: 2.5,  girth_max: 10.5,
     desc: 'Slow, steady, and — given the housing situation — surprisingly well-endowed.' },
-  warforged:     { name: 'Warforged',        mean: null, std: null,
-    girth_mean: null, girth_std: null,
+  warforged:     { name: 'Warforged',        mean: null, std: null,  min: null, max: null,
+    girth_mean: null, girth_std: null, girth_min: null, girth_max: null,
     desc: 'Built for war, not recreation. Consult your DM and a qualified blacksmith.' },
 };
 
@@ -595,9 +595,9 @@ function roll() {
     girthSection.classList.add('hidden');
   } else {
     unit.style.display = '';
-    let size;
-    do { size = rollDong(race.mean, race.std); } while (size < 0.5);
-    size = Math.round(size * 10) / 10;
+    let size, sAttempts = 0;
+    do { size = rollDong(race.mean, race.std); sAttempts++; } while ((size < race.min || size > race.max) && sAttempts < 100);
+    size = Math.round(Math.max(race.min, Math.min(race.max, size)) * 10) / 10;
 
     const desc = DESCRIPTORS.find(d => size < d.max);
     document.getElementById('result-number').textContent = size.toFixed(1);
@@ -608,9 +608,9 @@ function roll() {
     scaleWrap.classList.remove('hidden');
 
     // Girth
-    let girth;
-    do { girth = rollDong(race.girth_mean, race.girth_std); } while (girth < 0.8);
-    girth = Math.round(girth * 10) / 10;
+    let girth, gAttempts = 0;
+    do { girth = rollDong(race.girth_mean, race.girth_std); gAttempts++; } while ((girth < race.girth_min || girth > race.girth_max) && gAttempts < 100);
+    girth = Math.round(Math.max(race.girth_min, Math.min(race.girth_max, girth)) * 10) / 10;
 
     const diamPx = Math.round((girth / Math.PI) * 96);
     const gdesc  = GIRTH_DESCRIPTORS.find(d => girth < d.max);
