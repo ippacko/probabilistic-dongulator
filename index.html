@@ -648,11 +648,15 @@ function roll() {
 
     let size, sAttempts = 0;
     do { size = rollDong(race.mean, race.std); sAttempts++; } while ((size < race.min || size > race.max) && sAttempts < 100);
-    applyLength(Math.max(race.min, Math.min(race.max, size)));
+    size = Math.max(race.min, Math.min(race.max, size));
+    applyLength(size);
     scaleWrap.classList.remove('hidden');
 
+    // Girth is correlated with length: ~0.4 correlation via z-score nudge
+    const lengthZ   = (size - race.mean) / race.std;
+    const girthBias = lengthZ * race.girth_std * 0.4;
     let girth, gAttempts = 0;
-    do { girth = rollDong(race.girth_mean, race.girth_std); gAttempts++; } while ((girth < race.girth_min || girth > race.girth_max) && gAttempts < 100);
+    do { girth = rollDong(race.girth_mean + girthBias, race.girth_std); gAttempts++; } while ((girth < race.girth_min || girth > race.girth_max) && gAttempts < 100);
     applyGirth(Math.max(race.girth_min, Math.min(race.girth_max, girth)));
 
     girthSection.classList.remove('hidden');
@@ -669,6 +673,17 @@ makeDraggable(document.getElementById('length-track'), L_MIN, L_MAX, val => {
   const r = currentRace();
   if (r && r.min !== null) val = Math.max(r.min, Math.min(r.max, val));
   applyLength(val);
+  // When manually sliding length, nudge girth proportionally (no re-roll, just shift display)
+  if (r && r.mean !== null) {
+    const lengthZ   = (val - r.mean) / r.std;
+    const girthBias = lengthZ * r.girth_std * 0.4;
+    const currentGirth = parseFloat(document.getElementById('girth-number').textContent);
+    if (!isNaN(currentGirth)) {
+      const nudged = Math.max(r.girth_min, Math.min(r.girth_max,
+        r.girth_mean + girthBias + (currentGirth - r.girth_mean) * 0.5));
+      applyGirth(nudged);
+    }
+  }
 });
 makeDraggable(document.getElementById('girth-track'), G_MIN, G_MAX, val => {
   const r = currentRace();
